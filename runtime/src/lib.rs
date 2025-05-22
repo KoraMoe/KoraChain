@@ -22,6 +22,7 @@ use sp_version::RuntimeVersion;
 pub use frame_system::Call as SystemCall;
 pub use pallet_balances::Call as BalancesCall;
 pub use pallet_timestamp::Call as TimestampCall;
+use pallet_session::historical as pallet_session_historical;
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
 
@@ -52,7 +53,7 @@ pub mod opaque {
 
 impl_opaque_keys! {
 	pub struct SessionKeys {
-		pub aura: Aura,
+		pub babe: Babe,
 		pub grandpa: Grandpa,
 	}
 }
@@ -77,11 +78,6 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 };
 
 mod block_times {
-	/// This determines the average expected block time that we are targeting. Blocks will be
-	/// produced at a minimum duration defined by `SLOT_DURATION`. `SLOT_DURATION` is picked up by
-	/// `pallet_timestamp` which is in turn picked up by `pallet_aura` to implement `fn
-	/// slot_duration()`.
-	///
 	/// Change this to adjust the block time.
 	pub const MILLI_SECS_PER_BLOCK: u64 = 6000;
 
@@ -96,7 +92,15 @@ pub const MINUTES: BlockNumber = 60_000 / (MILLI_SECS_PER_BLOCK as BlockNumber);
 pub const HOURS: BlockNumber = MINUTES * 60;
 pub const DAYS: BlockNumber = HOURS * 24;
 
+pub const EPOCH_DURATION_IN_BLOCKS: BlockNumber = 10 * MINUTES;
+pub const EPOCH_DURATION_IN_SLOTS: u64 = {
+	const SLOT_FILL_RATE: f64 = MILLI_SECS_PER_BLOCK as f64 / SLOT_DURATION as f64;
+
+	(EPOCH_DURATION_IN_BLOCKS as f64 * SLOT_FILL_RATE) as u64
+};
 pub const BLOCK_HASH_COUNT: BlockNumber = 2400;
+
+pub const PRIMARY_PROBABILITY: (u64, u64) = (1, 4);
 
 // Unit = the base number of indivisible units for balances
 pub const UNIT: Balance = 1_000_000_000_000;
@@ -205,24 +209,54 @@ mod runtime {
 	pub type System = frame_system;
 
 	#[runtime::pallet_index(1)]
-	pub type Timestamp = pallet_timestamp;
+	pub type Utility = pallet_utility::Pallet<Runtime>;
 
 	#[runtime::pallet_index(2)]
-	pub type Aura = pallet_aura;
+	pub type Babe = pallet_babe::Pallet<Runtime>;
 
 	#[runtime::pallet_index(3)]
-	pub type Grandpa = pallet_grandpa;
+	pub type Timestamp = pallet_timestamp::Pallet<Runtime>;
 
 	#[runtime::pallet_index(4)]
-	pub type Balances = pallet_balances;
+	pub type Authorship = pallet_authorship::Pallet<Runtime>;
 
 	#[runtime::pallet_index(5)]
-	pub type TransactionPayment = pallet_transaction_payment;
+	pub type Grandpa = pallet_grandpa::Pallet<Runtime>;
 
 	#[runtime::pallet_index(6)]
-	pub type Sudo = pallet_sudo;
+	pub type Balances = pallet_balances::Pallet<Runtime>;
+
+	#[runtime::pallet_index(7)]
+	pub type TransactionPayment = pallet_transaction_payment::Pallet<Runtime>;
+
+	#[runtime::pallet_index(8)]
+	pub type Sudo = pallet_sudo::Pallet<Runtime>;
+
+	#[runtime::pallet_index(9)]
+	pub type ElectionProviderMultiPhase = pallet_election_provider_multi_phase::Pallet<Runtime>;
+
+	#[runtime::pallet_index(10)]
+	pub type Staking = pallet_staking::Pallet<Runtime>;
+
+	#[runtime::pallet_index(11)]
+	pub type Session = pallet_session;
+
+	#[runtime::pallet_index(12)]
+	pub type VoterList = pallet_bags_list::Pallet<Runtime, Instance1>;
+
+	#[runtime::pallet_index(13)]
+	pub type Offences = pallet_offences::Pallet<Runtime>;
+
+	#[runtime::pallet_index(14)]
+	pub type Treasury = pallet_treasury::Pallet<Runtime>;
+
+	#[runtime::pallet_index(15)]
+	pub type ImOnline = pallet_im_online::Pallet<Runtime>;
+
+	#[runtime::pallet_index(16)]
+	pub type Historical = pallet_session_historical::Pallet<Runtime>;
 
 	// Include the custom logic from the pallet-template in the runtime.
-	#[runtime::pallet_index(7)]
+	#[runtime::pallet_index(17)]
 	pub type Template = pallet_template;
 }

@@ -22,31 +22,31 @@ frame-system-benchmarking = { optional = true, workspace = true }
 frame-system-rpc-runtime-api.workspace = true
 frame-system.workspace = true
 frame-try-runtime = { optional = true, workspace = true }
-pallet-aura.workspace = true
+
 pallet-babe.workspace = true
 pallet-balances.workspace = true
 pallet-grandpa.workspace = true
 pallet-staking.workspace = true
+pallet-staking-reward-curve.workspace = true
+frame-election-provider-support.workspace = true
 pallet-session.workspace = true
 pallet-authorship.workspace = true
 pallet-im-online.workspace = true
 pallet-offences.workspace = true
 pallet-utility.workspace = true
-pallet-collective.workspace = true
-pallet-membership.workspace = true
-pallet-elections-phragmen.workspace = true
-pallet-democracy.workspace = true
+pallet-election-provider-multi-phase.workspace = true
 pallet-treasury.workspace = true
 pallet-sudo.workspace = true
 pallet-template.workspace = true
 pallet-timestamp.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
 pallet-transaction-payment.workspace = true
+pallet-bags-list.workspace = true
 scale-info = { features = ["derive", "serde"], workspace = true }
 serde_json = { workspace = true, default-features = false, features = ["alloc"] }
 sp-api.workspace = true
 sp-block-builder.workspace = true
-sp-consensus-aura = { features = ["serde"], workspace = true }
+
 sp-consensus-babe.workspace = true
 sp-consensus-grandpa = { features = ["serde"], workspace = true }
 sp-core = { features = ["serde"], workspace = true }
@@ -60,6 +60,7 @@ sp-staking.workspace = true
 sp-storage.workspace = true
 sp-transaction-pool.workspace = true
 sp-version = { features = ["serde"], workspace = true }
+sp-io = { workspace = true }
 
 [build-dependencies]
 substrate-wasm-builder = { optional = true, workspace = true, default-features = true }
@@ -76,7 +77,7 @@ std = [
 	"frame-system-rpc-runtime-api/std",
 	"frame-system/std",
 	"frame-try-runtime?/std",
-	"pallet-aura/std",
+
 	"pallet-babe/std",
 	"pallet-balances/std",
 	"pallet-grandpa/std",
@@ -86,11 +87,9 @@ std = [
 	"pallet-im-online/std",
 	"pallet-offences/std",
 	"pallet-utility/std",
-	"pallet-collective/std",
-	"pallet-membership/std",
-	"pallet-elections-phragmen/std",
-	"pallet-democracy/std",
+	"frame-election-provider-support/std",
 	"pallet-treasury/std",
+	"pallet-bags-list/std",
 	"pallet-sudo/std",
 	"pallet-template/std",
 	"pallet-timestamp/std",
@@ -100,7 +99,7 @@ std = [
 	"serde_json/std",
 	"sp-api/std",
 	"sp-block-builder/std",
-	"sp-consensus-aura/std",
+
 	"sp-consensus-babe/std",
 	"sp-consensus-grandpa/std",
 	"sp-core/std",
@@ -126,10 +125,8 @@ runtime-benchmarks = [
 	"pallet-balances/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-staking/runtime-benchmarks",
-	"pallet-collective/runtime-benchmarks",
-	"pallet-membership/runtime-benchmarks",
-	"pallet-elections-phragmen/runtime-benchmarks",
-	"pallet-democracy/runtime-benchmarks",
+	"pallet-bags-list/runtime-benchmarks",
+	"frame-election-provider-support/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-template/runtime-benchmarks",
@@ -143,7 +140,8 @@ try-runtime = [
 	"frame-support/try-runtime",
 	"frame-system/try-runtime",
 	"frame-try-runtime/try-runtime",
-	"pallet-aura/try-runtime",
+	"frame-election-provider-support/try-runtime",
+
 	"pallet-babe/try-runtime",
 	"pallet-balances/try-runtime",
 	"pallet-grandpa/try-runtime",
@@ -152,11 +150,8 @@ try-runtime = [
 	"pallet-authorship/try-runtime",
 	"pallet-im-online/try-runtime",
 	"pallet-offences/try-runtime",
+	"pallet-bags-list/try-runtime",
 	"pallet-utility/try-runtime",
-	"pallet-collective/try-runtime",
-	"pallet-membership/try-runtime",
-	"pallet-elections-phragmen/try-runtime",
-	"pallet-democracy/try-runtime",
 	"pallet-treasury/try-runtime",
 	"pallet-sudo/try-runtime",
 	"pallet-template/try-runtime",

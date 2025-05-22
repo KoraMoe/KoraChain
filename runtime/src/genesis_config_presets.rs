@@ -18,15 +18,15 @@
 use crate::{AccountId, BalancesConfig, RuntimeGenesisConfig, SudoConfig};
 use alloc::{vec, vec::Vec};
 use frame_support::build_struct_json_patch;
+use sp_consensus_babe::AuthorityId as BabeId;
 use serde_json::Value;
-use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
 use sp_genesis_builder::{self, PresetId};
 use sp_keyring::Sr25519Keyring;
 
 // Returns the genesis config presets populated with given parameters.
 fn testnet_genesis(
-	initial_authorities: Vec<(AuraId, GrandpaId)>,
+	initial_authorities: Vec<(BabeId, GrandpaId)>,
 	endowed_accounts: Vec<AccountId>,
 	root: AccountId,
 ) -> Value {
@@ -38,8 +38,8 @@ fn testnet_genesis(
 				.map(|k| (k, 1u128 << 60))
 				.collect::<Vec<_>>(),
 		},
-		aura: pallet_aura::GenesisConfig {
-			authorities: initial_authorities.iter().map(|x| (x.0.clone())).collect::<Vec<_>>(),
+		babe: pallet_babe::GenesisConfig {
+			authorities: initial_authorities.iter().map(|x| (x.0.clone(), 1)).collect::<Vec<_>>(),
 		},
 		grandpa: pallet_grandpa::GenesisConfig {
 			authorities: initial_authorities.iter().map(|x| (x.1.clone(), 1)).collect::<Vec<_>>(),
