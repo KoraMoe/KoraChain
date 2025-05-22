@@ -1,16 +1,21 @@
 use sc_service::ChainType;
-use solochain_template_runtime::WASM_BINARY;
+use kora_chain_runtime::WASM_BINARY;
 
 /// Specialized `ChainSpec`. This is a specialization of the general Substrate ChainSpec type.
 pub type ChainSpec = sc_service::GenericChainSpec;
 
 pub fn development_chain_spec() -> Result<ChainSpec, String> {
+	let mut properties = sc_service::Properties::new();
+	properties.insert("tokenSymbol".into(), "KORA".into());
+	properties.insert("tokenDecimals".into(), 12.into());
+	
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
 		None,
 	)
 	.with_name("Development")
 	.with_id("dev")
+	.with_properties(properties)
 	.with_chain_type(ChainType::Development)
 	.with_genesis_config_preset_name(sp_genesis_builder::DEV_RUNTIME_PRESET)
 	.build())

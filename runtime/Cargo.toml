@@ -1,12 +1,12 @@
 [package]
-name = "solochain-template-runtime"
-description = "A solochain runtime template built with Substrate, part of Polkadot Sdk."
+name = "kora-chain-runtime"
+description = "KoraChain Logic Layer, powered by Substrate."
 version = "0.1.0"
 license = "Unlicense"
-authors.workspace = true
-homepage.workspace = true
-repository.workspace = true
-edition.workspace = true
+authors = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+edition = { workspace = true }
 publish = false
 
 [package.metadata.docs.rs]

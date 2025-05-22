@@ -1,5 +1,4 @@
-//! Substrate Node Template CLI library.
-#![warn(missing_docs)]
+// KoraChain Node
 
 mod benchmarking;
 mod chain_spec;
