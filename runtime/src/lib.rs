@@ -257,7 +257,13 @@ mod runtime {
 	#[runtime::pallet_index(16)]
 	pub type Historical = pallet_session_historical::Pallet<Runtime>;
 
-	// Include the custom logic from the pallet-template in the runtime.
 	#[runtime::pallet_index(17)]
+	pub type DelegatedStaking = pallet_delegated_staking::Pallet<Runtime>;
+	
+	#[runtime::pallet_index(18)]
+	pub type NominationPools = pallet_nomination_pools::Pallet<Runtime>;
+
+	// Include the custom logic from the pallet-template in the runtime.
+	#[runtime::pallet_index(19)]
 	pub type Template = pallet_template;
 }

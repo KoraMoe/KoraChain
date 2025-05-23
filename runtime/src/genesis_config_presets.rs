@@ -27,15 +27,28 @@ use sp_core::sr25519;
 use sp_genesis_builder::{self, PresetId};
 use sp_runtime::Perbill;
 use sp_staking::StakerStatus;
+use pallet_staking::ValidatorPrefs;
 
 pub const ENDOWMENT: Balance = 10_000_000 * UNIT;
-pub const STASH: Balance = ENDOWMENT / 10;
 
 pub type Staker = (AccountId, AccountId, Balance, StakerStatus<AccountId>);
 
 pub fn validator(account: AccountId) -> Staker {
 	// validator, controller, stash, staker status
-	(account.clone(), account, STASH, StakerStatus::Validator)
+	(account.clone(), account, ENDOWMENT, StakerStatus::Validator)
+}
+
+pub fn nominator(account: AccountId, targets: Vec<AccountId>) -> Staker {
+	// nominator, controller, stash, staker status with targets to nominate
+	(account.clone(), account, ENDOWMENT, StakerStatus::Nominator(targets))
+}
+
+/// Create default validator preferences with a commission rate
+pub fn default_validator_prefs() -> ValidatorPrefs {
+	ValidatorPrefs {
+		commission: Perbill::from_percent(5),
+		blocked: false,
+	}
 }
 
 pub fn session_keys(
@@ -105,26 +118,32 @@ fn testnet_genesis(
 /// Return the development genesis config.
 pub fn development_config_genesis() -> Value {
 	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, _bob, _bob_session_keys) = authority_keys_from_seed("Bob");
+	let (bob_stash, bob, _bob_session_keys) = authority_keys_from_seed("Bob");
 
 	testnet_genesis(
 		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
 		alice.clone(),
-		vec![alice.clone(), alice_stash.clone(), bob_stash.clone()],
-		vec![validator(alice_stash.clone())],
+		vec![alice.clone(), alice_stash.clone(), bob.clone(), bob_stash.clone()],
+		vec![
+			validator(alice_stash.clone()),
+			nominator(bob_stash.clone(), vec![alice_stash.clone()]),
+		],
 	)
 }
 
 /// Return the local genesis config preset.
 pub fn local_config_genesis() -> Value {
 	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, _bob, _bob_session_keys) = authority_keys_from_seed("Bob");
+	let (bob_stash, bob, _bob_session_keys) = authority_keys_from_seed("Bob");
 
 	testnet_genesis(
 		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
 		alice.clone(),
-		vec![alice.clone(), alice_stash.clone(), bob_stash.clone()],
-		vec![validator(alice_stash.clone())],
+		vec![alice.clone(), alice_stash.clone(), bob.clone(), bob_stash.clone()],
+		vec![
+			validator(alice_stash.clone()),
+			nominator(bob_stash.clone(), vec![alice_stash.clone()]),
+		],
 	)
 }
 

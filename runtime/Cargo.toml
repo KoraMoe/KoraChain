@@ -28,6 +28,7 @@ pallet-balances.workspace = true
 pallet-grandpa.workspace = true
 pallet-staking.workspace = true
 pallet-staking-reward-curve.workspace = true
+pallet-nomination-pools.workspace = true
 frame-election-provider-support.workspace = true
 pallet-session.workspace = true
 pallet-authorship.workspace = true
@@ -35,6 +36,7 @@ pallet-im-online.workspace = true
 pallet-offences.workspace = true
 pallet-utility.workspace = true
 pallet-election-provider-multi-phase.workspace = true
+pallet-delegated-staking.workspace = true
 pallet-treasury.workspace = true
 pallet-sudo.workspace = true
 pallet-template.workspace = true
@@ -46,7 +48,6 @@ scale-info = { features = ["derive", "serde"], workspace = true }
 serde_json = { workspace = true, default-features = false, features = ["alloc"] }
 sp-api.workspace = true
 sp-block-builder.workspace = true
-
 sp-consensus-babe.workspace = true
 sp-consensus-grandpa = { features = ["serde"], workspace = true }
 sp-core = { features = ["serde"], workspace = true }
@@ -77,7 +78,7 @@ std = [
 	"frame-system-rpc-runtime-api/std",
 	"frame-system/std",
 	"frame-try-runtime?/std",
-
+	"pallet-nomination-pools/std",
 	"pallet-babe/std",
 	"pallet-balances/std",
 	"pallet-grandpa/std",
@@ -87,6 +88,8 @@ std = [
 	"pallet-im-online/std",
 	"pallet-offences/std",
 	"pallet-utility/std",
+	"pallet-election-provider-multi-phase/std",
+	"pallet-delegated-staking/std",
 	"frame-election-provider-support/std",
 	"pallet-treasury/std",
 	"pallet-bags-list/std",
@@ -99,7 +102,6 @@ std = [
 	"serde_json/std",
 	"sp-api/std",
 	"sp-block-builder/std",
-
 	"sp-consensus-babe/std",
 	"sp-consensus-grandpa/std",
 	"sp-core/std",
@@ -125,6 +127,9 @@ runtime-benchmarks = [
 	"pallet-balances/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-staking/runtime-benchmarks",
+	"pallet-im-online/runtime-benchmarks",
+	"pallet-offences/runtime-benchmarks",
+	"pallet-utility/runtime-benchmarks",
 	"pallet-bags-list/runtime-benchmarks",
 	"frame-election-provider-support/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",
@@ -141,11 +146,11 @@ try-runtime = [
 	"frame-system/try-runtime",
 	"frame-try-runtime/try-runtime",
 	"frame-election-provider-support/try-runtime",
-
 	"pallet-babe/try-runtime",
 	"pallet-balances/try-runtime",
 	"pallet-grandpa/try-runtime",
 	"pallet-staking/try-runtime",
+	"pallet-nomination-pools/try-runtime",
 	"pallet-session/try-runtime",
 	"pallet-authorship/try-runtime",
 	"pallet-im-online/try-runtime",

@@ -39,15 +39,9 @@ use frame_system::{
 	EnsureRoot, EnsureWithSuccess,
 };
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
-use sp_runtime::{
-	curve::PiecewiseLinear,
-	generic,
-	traits::{
-		OpaqueKeys, One,
-	},
-	transaction_validity::{TransactionPriority},
-	Perbill, Percent, Permill,
-};
+use sp_runtime::{curve::PiecewiseLinear, generic, traits::{
+	OpaqueKeys, One,
+}, transaction_validity::{TransactionPriority}, FixedU128, Perbill, Percent, Permill};
 use pallet_election_provider_multi_phase::{GeometricDepositBase, SolutionAccuracyOf};
 use sp_version::RuntimeVersion;
 use frame_support::{
@@ -118,7 +112,7 @@ impl frame_system::Config for Runtime {
 	type AccountData = pallet_balances::AccountData<Balance>;
 	/// This is used as an identifier of the chain. 42 is the generic substrate prefix.
 	type SS58Prefix = SS58Prefix;
-	type MaxConsumers = frame_support::traits::ConstU32<16>;
+	type MaxConsumers = ConstU32<16>;
 }
 
 parameter_types! {
@@ -298,7 +292,7 @@ parameter_types! {
 
 	// miner configs
 	/// We prioritize im-online heartbeats over election solution submission.
-	pub const StakingUnsignedPriority: TransactionPriority = TransactionPriority::max_value() / 2;
+	pub const StakingUnsignedPriority: TransactionPriority = TransactionPriority::MAX / 2;
 
 	// miner configs
 	pub const MultiPhaseUnsignedPriority: TransactionPriority = StakingUnsignedPriority::get() - 1u64;
@@ -382,9 +376,64 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
 }
 
 parameter_types! {
-	pub TreasuryAccount: AccountId = Treasury::account_id();
+	pub const DelegatedStakingPalletId: PalletId = PalletId(*b"py/dlstk");
+	pub const SlashRewardFraction: Perbill = Perbill::from_percent(1);
 }
 
+impl pallet_delegated_staking::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type PalletId = DelegatedStakingPalletId;
+	type Currency = Balances;
+	type OnSlash = ();
+	type SlashRewardFraction = SlashRewardFraction;
+	type RuntimeHoldReason = RuntimeHoldReason;
+	type CoreStaking = Staking;
+}
+
+
+parameter_types! {
+	pub const PostUnbondPoolsWindow: u32 = 4;
+	pub const NominationPoolsPalletId: PalletId = PalletId(*b"py/nopls");
+	pub const MaxPointsToBalance: u8 = 10;
+}
+
+use sp_runtime::traits::Convert;
+pub struct BalanceToU256;
+impl Convert<Balance, sp_core::U256> for BalanceToU256 {
+	fn convert(balance: Balance) -> sp_core::U256 {
+		sp_core::U256::from(balance)
+	}
+}
+pub struct U256ToBalance;
+impl Convert<sp_core::U256, Balance> for U256ToBalance {
+	fn convert(n: sp_core::U256) -> Balance {
+		n.try_into().unwrap_or(Balance::MAX)
+	}
+}
+
+impl pallet_nomination_pools::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type WeightInfo = ();
+    type Currency = Balances;
+    type RuntimeFreezeReason = RuntimeFreezeReason;
+    type RewardCounter = FixedU128;
+	type PalletId = NominationPoolsPalletId;
+	type MaxPointsToBalance = MaxPointsToBalance;
+	type MaxUnbonding = ConstU32<8>;
+	type BalanceToU256 = BalanceToU256;
+	type U256ToBalance = U256ToBalance;
+	type StakeAdapter =
+	pallet_nomination_pools::adapter::DelegateStake<Self, Staking, DelegatedStaking>;
+	type PostUnbondingPoolsWindow = PostUnbondPoolsWindow;
+	type MaxMetadataLen = ConstU32<256>;
+    type AdminOrigin = EnsureRoot<AccountId>;
+    type BlockNumberProvider = System;
+    type Filter = ();
+}
+
+parameter_types! {
+	pub TreasuryAccount: AccountId = Treasury::account_id();
+}
 impl pallet_staking::Config for Runtime {
 	type OldCurrency = Balances;
 	type Currency = Balances;
@@ -405,7 +454,6 @@ impl pallet_staking::Config for Runtime {
 	type SessionsPerEra = SessionsPerEra;
 	type BondingDuration = BondingDuration;
 	type SlashDeferDuration = SlashDeferDuration;
-	/// A super-majority of the council can cancel the slash.
 	type AdminOrigin = EnsureRoot<AccountId>;
 	type SessionInterface = Self;
 	type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
@@ -416,7 +464,7 @@ impl pallet_staking::Config for Runtime {
 	type TargetList = pallet_staking::UseValidatorsMap<Self>;
 	type MaxUnlockingChunks = ConstU32<32>;
 	type MaxControllersInDeprecationBatch = MaxControllersInDeprecationBatch;
-	type EventListeners = ();
+	type EventListeners = (NominationPools, DelegatedStaking);
 	type Filter = ();
 	type BenchmarkingConfig = StakingBenchmarkingConfig;
 	type WeightInfo = pallet_staking::weights::SubstrateWeight<Runtime>;
@@ -552,7 +600,7 @@ where
 	RuntimeCall: From<LocalCall>,
 {
 	fn create_inherent(call: RuntimeCall) -> UncheckedExtrinsic {
-		generic::UncheckedExtrinsic::new_bare(call).into()
+		UncheckedExtrinsic::new_bare(call).into()
 	}
 }
 

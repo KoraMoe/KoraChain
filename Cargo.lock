@@ -4471,9 +4471,11 @@ dependencies = [
  "pallet-babe",
  "pallet-bags-list",
  "pallet-balances",
+ "pallet-delegated-staking",
  "pallet-election-provider-multi-phase",
  "pallet-grandpa",
  "pallet-im-online",
+ "pallet-nomination-pools",
  "pallet-offences",
  "pallet-session",
  "pallet-staking",
@@ -6052,20 +6054,54 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-election-provider-multi-phase"
-version = "39.2.0"
+name = "pallet-delegated-staking"
+version = "7.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0425fefdbe37d50a05b6984cd536111acb362a5ed8f267a4c6253431af0717f"
+checksum = "e1827efa28acb4e5d26d0840c2909b1770ea8cc89028f3be4a7f6114a589b1c8"
 dependencies = [
- "frame-election-provider-support",
  "frame-support",
  "frame-system",
  "log",
  "parity-scale-codec",
  "scale-info",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+]
+
+[[package]]
+name = "pallet-election-provider-multi-phase"
+version = "39.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0425fefdbe37d50a05b6984cd536111acb362a5ed8f267a4c6253431af0717f"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-election-provider-support-benchmarking",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "scale-info",
  "sp-arithmetic",
  "sp-core",
  "sp-io",
+ "sp-npos-elections",
+ "sp-runtime",
+ "strum 0.26.3",
+]
+
+[[package]]
+name = "pallet-election-provider-support-benchmarking"
+version = "39.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5db80ea1d9cab28608ad2747981640a82de9d2f8c3d096664ff9e557a42a7c1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-system",
+ "parity-scale-codec",
  "sp-npos-elections",
  "sp-runtime",
 ]
@@ -6111,6 +6147,25 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-staking",
+]
+
+[[package]]
+name = "pallet-nomination-pools"
+version = "38.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f74b7d33fa2b626d3b682967eb65577589e585475a5b43383fc6851ae5852d82"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+ "sp-tracing",
 ]
 
 [[package]]
