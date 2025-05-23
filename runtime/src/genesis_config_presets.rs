@@ -30,17 +30,18 @@ use sp_staking::StakerStatus;
 use pallet_staking::ValidatorPrefs;
 
 pub const ENDOWMENT: Balance = 10_000_000 * UNIT;
+pub const STASH: Balance = ENDOWMENT / 10;
 
 pub type Staker = (AccountId, AccountId, Balance, StakerStatus<AccountId>);
 
 pub fn validator(account: AccountId) -> Staker {
 	// validator, controller, stash, staker status
-	(account.clone(), account, ENDOWMENT, StakerStatus::Validator)
+	(account.clone(), account, STASH, StakerStatus::Validator)
 }
 
 pub fn nominator(account: AccountId, targets: Vec<AccountId>) -> Staker {
 	// nominator, controller, stash, staker status with targets to nominate
-	(account.clone(), account, ENDOWMENT, StakerStatus::Nominator(targets))
+	(account.clone(), account, STASH, StakerStatus::Nominator(targets))
 }
 
 /// Create default validator preferences with a commission rate
@@ -101,6 +102,8 @@ fn testnet_genesis(
 		},
 		staking: StakingConfig {
 			validator_count,
+			max_validator_count: Some(10),
+			max_nominator_count: Some(100),
 			minimum_validator_count,
 			invulnerables: initial_authorities
 				.iter()
@@ -110,6 +113,7 @@ fn testnet_genesis(
 				.expect("Too many invulnerable validators: upper limit is MaxInvulnerables from pallet staking config"),
 			slash_reward_fraction: Perbill::from_percent(10),
 			stakers,
+			..Default::default()
 		},
 		sudo: SudoConfig { key: Some(root_key) },
 	})

@@ -39,7 +39,7 @@ use frame_system::{
 	EnsureRoot, EnsureWithSuccess,
 };
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
-use sp_runtime::{curve::PiecewiseLinear, generic, traits::{
+use sp_runtime::{curve::PiecewiseLinear, traits::{
 	OpaqueKeys, One,
 }, transaction_validity::{TransactionPriority}, FixedU128, Perbill, Percent, Permill};
 use pallet_election_provider_multi_phase::{GeometricDepositBase, SolutionAccuracyOf};
