@@ -27,27 +27,27 @@
 use alloc::vec;
 use frame_support::{
 	derive_impl, parameter_types,
-	traits::{ConstBool, ConstU128, ConstU32, ConstU64, ConstU8, VariantCountOf},
+	traits::{ConstU128, ConstU32, ConstU64, ConstU8, VariantCountOf, KeyOwnerProofSystem},
 	weights::{
 		constants::{RocksDbWeight, WEIGHT_REF_TIME_PER_SECOND},
 		IdentityFee, Weight,
 	},
 };
-use codec::{Decode, Encode};
+use codec::{Decode};
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
-	EnsureRoot, EnsureRootWithSuccess, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
+	EnsureRoot, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
 };
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
 use sp_runtime::{
 	curve::PiecewiseLinear,
 	generic, impl_opaque_keys, str_array as s,
 	traits::{
-		self, AccountIdConversion, BlakeTwo256, Block as BlockT, Bounded, ConvertInto,
-		MaybeConvert, NumberFor, OpaqueKeys, SaturatedConversion, StaticLookup, One,
+		self, BlakeTwo256 as BlockT, ConvertInto,
+		NumberFor, OpaqueKeys, One,
 	},
 	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity},
-	ApplyExtrinsicResult, FixedPointNumber, FixedU128, MultiSignature, MultiSigner, Perbill,
+	ApplyExtrinsicResult, FixedU128, MultiSignature, MultiSigner, Perbill,
 	Percent, Permill, Perquintill, RuntimeDebug,
 };
 use pallet_election_provider_multi_phase::{GeometricDepositBase, SolutionAccuracyOf};
@@ -55,14 +55,13 @@ use sp_version::RuntimeVersion;
 use frame_support::{
 	dispatch::DispatchClass,
 	traits::{
-		EitherOfDiverse,
 		fungible::{
 			NativeOrWithId
 		},
 		tokens::{
 			imbalance::{ResolveAssetTo, ResolveTo},
 			pay::{PayAssetFromAccount, PayFromAccount},
-			ConversionFromAssetBalance, UnityAssetBalanceConversion
+			UnityAssetBalanceConversion
 		}
 	},
 	weights::{
@@ -77,6 +76,7 @@ use frame_election_provider_support::{
 	onchain, BalancingConfig, ElectionDataProvider, SequentialPhragmen, VoteWeight,
 };
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
+use sp_core::crypto::KeyTypeId;
 use sp_runtime::traits::IdentityLookup;
 // Local module imports
 use super::*;
@@ -150,9 +150,10 @@ impl pallet_babe::Config for Runtime {
 	type WeightInfo = ();
 	type MaxAuthorities = MaxAuthorities;
 	type MaxNominators = MaxNominators;
-	type KeyOwnerProof = sp_session::MembershipProof;
+	type KeyOwnerProof =
+		<Historical as KeyOwnerProofSystem<(KeyTypeId, pallet_babe::AuthorityId)>>::Proof;
 	type EquivocationReportSystem =
-	pallet_babe::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
+		pallet_babe::EquivocationReportSystem<Self, Offences, Historical, ReportLongevity>;
 }
 
 impl pallet_offences::Config for Runtime {
@@ -181,7 +182,7 @@ impl pallet_authorship::Config for Runtime {
 impl pallet_session::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type ValidatorId = <Self as frame_system::Config>::AccountId;
-	type ValidatorIdOf = sp_runtime::traits::ConvertInto;
+	type ValidatorIdOf = pallet_staking::StashOf<Self>;
 	type ShouldEndSession = Babe;
 	type NextSessionRotation = Babe;
 	type SessionManager = pallet_session::historical::NoteHistoricalRoot<Self, Staking>;

@@ -55,6 +55,7 @@ impl_opaque_keys! {
 	pub struct SessionKeys {
 		pub babe: Babe,
 		pub grandpa: Grandpa,
+		pub im_online: ImOnline,
 	}
 }
 
