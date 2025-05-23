@@ -208,7 +208,6 @@ pub fn new_full<
 >(
 	config: Configuration,
 ) -> Result<TaskManager, ServiceError> {
-	let _is_offchain_indexing_enabled = config.offchain_worker.indexing_enabled;
 	let role = config.role;
 	let force_authoring = config.force_authoring;
 	let backoff_authoring_blocks =
@@ -233,8 +232,6 @@ pub fn new_full<
 		config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
 	);
 	let shared_voter_state = rpc_setup;
-	let _auth_disc_publish_non_global_ips = config.network.allow_non_globals_in_dht;
-	let _auth_disc_public_addresses = config.network.public_addresses.clone();
 
 	let mut net_config = sc_network::config::FullNetworkConfiguration::<_, _, N>::new(
 		&config.network,
@@ -273,7 +270,7 @@ pub fn new_full<
 			metrics,
 		})?;
 
-	let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		config,
 		backend: backend.clone(),
 		client: client.clone(),

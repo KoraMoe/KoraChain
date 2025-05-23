@@ -95,6 +95,8 @@ sp-transaction-pool = { version = "36.0.0", default-features = false }
 sp-version = { version = "39.0.0", default-features = false }
 frame-election-provider-support = { version = "40.1.1", default-features = false }
 substrate-wasm-builder = { version = "26.0.1", default-features = false }
+sc-sync-state-rpc = { version = "0.49.0", default-features = false }
+substrate-state-trie-migration-rpc = { version = "42.0.0", default-features = false }
 
 [profile.release]
 opt-level = 3

@@ -94,8 +94,8 @@ sp-consensus-babe.default-features = true
 sp-consensus-babe.workspace = true
 sp-consensus.default-features = true
 sp-consensus.workspace = true
-
-log.workspace = true
+sc-sync-state-rpc = { workspace = true, default-features = true }
+substrate-state-trie-migration-rpc = { workspace = true, default-features = true }
 substrate-frame-rpc-system.default-features = true
 substrate-frame-rpc-system.workspace = true
 

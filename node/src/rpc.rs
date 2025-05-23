@@ -72,13 +72,12 @@ pub struct FullDeps<C, P, SC, B> {
 	/// The SelectChain Strategy
 	pub select_chain: SC,
 	/// A copy of the chain spec.
-	#[allow(dead_code)]
 	pub chain_spec: Box<dyn ChainSpec>,
 	/// BABE specific dependencies.
 	pub babe: BabeDeps,
 	/// GRANDPA specific dependencies.
 	pub grandpa: GrandpaDeps<B>,
-	#[allow(dead_code)]
+	/// Backend.
 	pub backend: Arc<B>,
 }
 
@@ -88,10 +87,10 @@ pub fn create_full<C, P, SC, B>(
 		client,
 		pool,
 		select_chain,
-		chain_spec: _,
+		chain_spec,
 		babe,
 		grandpa,
-		backend: _,
+		backend,
 	}: FullDeps<C, P, SC, B>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where
@@ -118,9 +117,9 @@ where
 	use sc_rpc::{
 		dev::{Dev, DevApiServer},
 	};
-	//use sc_sync_state_rpc::{SyncState, SyncStateApiServer};
+	use sc_sync_state_rpc::{SyncState, SyncStateApiServer};
 	use substrate_frame_rpc_system::{System, SystemApiServer};
-	//use substrate_state_trie_migration_rpc::{StateMigration, StateMigrationApiServer};
+	use substrate_state_trie_migration_rpc::{StateMigration, StateMigrationApiServer};
 
 	let mut io = RpcModule::new(());
 
@@ -148,14 +147,14 @@ where
 		)
 			.into_rpc(),
 	)?;
-	/*
+
 	io.merge(
 		SyncState::new(chain_spec, client.clone(), shared_authority_set, babe_worker_handle)?
 			.into_rpc(),
 	)?;
 
 	io.merge(StateMigration::new(client.clone(), backend).into_rpc())?;
-	*/
+	
 	io.merge(Dev::new(client).into_rpc())?;
 
 	Ok(io)
