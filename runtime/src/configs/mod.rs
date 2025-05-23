@@ -36,37 +36,32 @@ use frame_support::{
 use codec::{Decode};
 use frame_system::{
 	limits::{BlockLength, BlockWeights},
-	EnsureRoot, EnsureSigned, EnsureSignedBy, EnsureWithSuccess,
+	EnsureRoot, EnsureWithSuccess,
 };
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
 use sp_runtime::{
 	curve::PiecewiseLinear,
-	generic, impl_opaque_keys, str_array as s,
+	generic,
 	traits::{
-		self, BlakeTwo256 as BlockT, ConvertInto,
-		NumberFor, OpaqueKeys, One,
+		OpaqueKeys, One,
 	},
-	transaction_validity::{TransactionPriority, TransactionSource, TransactionValidity},
-	ApplyExtrinsicResult, FixedU128, MultiSignature, MultiSigner, Perbill,
-	Percent, Permill, Perquintill, RuntimeDebug,
+	transaction_validity::{TransactionPriority},
+	Perbill, Percent, Permill,
 };
 use pallet_election_provider_multi_phase::{GeometricDepositBase, SolutionAccuracyOf};
 use sp_version::RuntimeVersion;
 use frame_support::{
 	dispatch::DispatchClass,
 	traits::{
-		fungible::{
-			NativeOrWithId
-		},
 		tokens::{
-			imbalance::{ResolveAssetTo, ResolveTo},
-			pay::{PayAssetFromAccount, PayFromAccount},
+			imbalance::{ResolveTo},
+			pay::{PayFromAccount},
 			UnityAssetBalanceConversion
 		}
 	},
 	weights::{
 		constants::{
-			BlockExecutionWeight, ExtrinsicBaseWeight
+			BlockExecutionWeight
 		},
 	},
 	PalletId

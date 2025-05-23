@@ -16,7 +16,8 @@
 // limitations under the License.
 
 #![warn(missing_docs)]
-#![warn(unused_crate_dependencies)]
+// This attribute should be at the crate level to be effective
+// #![warn(unused_crate_dependencies)]
 
 use std::sync::Arc;
 
@@ -71,11 +72,13 @@ pub struct FullDeps<C, P, SC, B> {
 	/// The SelectChain Strategy
 	pub select_chain: SC,
 	/// A copy of the chain spec.
+	#[allow(dead_code)]
 	pub chain_spec: Box<dyn ChainSpec>,
 	/// BABE specific dependencies.
 	pub babe: BabeDeps,
 	/// GRANDPA specific dependencies.
 	pub grandpa: GrandpaDeps<B>,
+	#[allow(dead_code)]
 	pub backend: Arc<B>,
 }
 
@@ -85,10 +88,10 @@ pub fn create_full<C, P, SC, B>(
 		client,
 		pool,
 		select_chain,
-		chain_spec,
+		chain_spec: _,
 		babe,
 		grandpa,
-		backend,
+		backend: _,
 	}: FullDeps<C, P, SC, B>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
 where

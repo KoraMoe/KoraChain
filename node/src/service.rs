@@ -208,7 +208,7 @@ pub fn new_full<
 >(
 	config: Configuration,
 ) -> Result<TaskManager, ServiceError> {
-	let is_offchain_indexing_enabled = config.offchain_worker.indexing_enabled;
+	let _is_offchain_indexing_enabled = config.offchain_worker.indexing_enabled;
 	let role = config.role;
 	let force_authoring = config.force_authoring;
 	let backoff_authoring_blocks =
@@ -233,8 +233,8 @@ pub fn new_full<
 		config.prometheus_config.as_ref().map(|cfg| &cfg.registry),
 	);
 	let shared_voter_state = rpc_setup;
-	let auth_disc_publish_non_global_ips = config.network.allow_non_globals_in_dht;
-	let auth_disc_public_addresses = config.network.public_addresses.clone();
+	let _auth_disc_publish_non_global_ips = config.network.allow_non_globals_in_dht;
+	let _auth_disc_public_addresses = config.network.public_addresses.clone();
 
 	let mut net_config = sc_network::config::FullNetworkConfiguration::<_, _, N>::new(
 		&config.network,
@@ -273,7 +273,7 @@ pub fn new_full<
 			metrics,
 		})?;
 
-	let rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+	let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		config,
 		backend: backend.clone(),
 		client: client.clone(),
@@ -288,7 +288,7 @@ pub fn new_full<
 		telemetry: telemetry.as_mut(),
 	})?;
 
-	let (block_import, grandpa_link, babe_link, babe_worker_handle) = import_setup;
+	let (block_import, grandpa_link, babe_link, _babe_worker_handle) = import_setup;
 
 	if let sc_service::config::Role::Authority { .. } = &role {
 		let proposer = sc_basic_authorship::ProposerFactory::new(
@@ -309,8 +309,8 @@ pub fn new_full<
 			block_import,
 			sync_oracle: sync_service.clone(),
 			justification_sync_link: sync_service.clone(),
-			create_inherent_data_providers: move |parent, ()| {
-				let client_clone = client_clone.clone();
+			create_inherent_data_providers: move |_parent, ()| {
+				let _client_clone = client_clone.clone();
 				async move {
 					let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
 

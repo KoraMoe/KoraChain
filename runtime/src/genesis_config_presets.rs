@@ -25,7 +25,6 @@ use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use sp_core::crypto::get_public_from_string_or_panic;
 use sp_core::sr25519;
 use sp_genesis_builder::{self, PresetId};
-use sp_keyring::Sr25519Keyring;
 use sp_runtime::Perbill;
 use sp_staking::StakerStatus;
 
@@ -106,7 +105,7 @@ fn testnet_genesis(
 /// Return the development genesis config.
 pub fn development_config_genesis() -> Value {
 	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, _bob, bob_session_keys) = authority_keys_from_seed("Bob");
+	let (bob_stash, _bob, _bob_session_keys) = authority_keys_from_seed("Bob");
 
 	testnet_genesis(
 		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
@@ -119,7 +118,7 @@ pub fn development_config_genesis() -> Value {
 /// Return the local genesis config preset.
 pub fn local_config_genesis() -> Value {
 	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, _bob, bob_session_keys) = authority_keys_from_seed("Bob");
+	let (bob_stash, _bob, _bob_session_keys) = authority_keys_from_seed("Bob");
 
 	testnet_genesis(
 		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
