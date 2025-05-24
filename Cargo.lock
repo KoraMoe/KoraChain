@@ -4507,7 +4507,6 @@ dependencies = [
  "pallet-collective",
  "pallet-conviction-voting",
  "pallet-delegated-staking",
- "pallet-democracy",
  "pallet-election-provider-multi-phase",
  "pallet-elections-phragmen",
  "pallet-glutton",
@@ -6224,24 +6223,6 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-staking",
-]
-
-[[package]]
-name = "pallet-democracy"
-version = "40.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9f9e8d2e1a11aa809779748c073ec9e6d44807fbdae7787edbbbbff673ee015"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "log",
- "parity-scale-codec",
- "scale-info",
- "serde",
- "sp-core",
- "sp-io",
- "sp-runtime",
 ]
 
 [[package]]

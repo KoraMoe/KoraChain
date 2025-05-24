@@ -43,7 +43,6 @@ pallet-timestamp.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
 pallet-transaction-payment.workspace = true
 pallet-bags-list.workspace = true
-pallet-democracy.workspace = true
 pallet-assets.workspace = true
 pallet-vesting.workspace = true
 pallet-identity.workspace = true
@@ -121,7 +120,6 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
-	"pallet-democracy/std",
 	"pallet-assets/std",
 	"pallet-vesting/std",
 	"pallet-identity/std",
@@ -182,7 +180,6 @@ runtime-benchmarks = [
 	"pallet-election-provider-multi-phase/runtime-benchmarks",
 	"pallet-nomination-pools/runtime-benchmarks",
 	"pallet-delegated-staking/runtime-benchmarks",
-	"pallet-democracy/runtime-benchmarks",
 	"pallet-assets/runtime-benchmarks",
 	"pallet-vesting/runtime-benchmarks",
 	"pallet-identity/runtime-benchmarks",
@@ -200,6 +197,10 @@ runtime-benchmarks = [
 	"pallet-bounties/runtime-benchmarks",
 	"pallet-glutton/runtime-benchmarks",
 	"pallet-salary/runtime-benchmarks",
+	"pallet-parameters/runtime-benchmarks",
+	"pallet-verify-signature/runtime-benchmarks",
+	"pallet-elections-phragmen/runtime-benchmarks",
+	"pallet-membership/runtime-benchmarks",
 	"frame-election-provider-support/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
@@ -231,7 +232,6 @@ try-runtime = [
 	"pallet-template/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"pallet-democracy/try-runtime",
 	"pallet-assets/try-runtime",
 	"pallet-vesting/try-runtime",
 	"pallet-identity/try-runtime",
@@ -249,6 +249,10 @@ try-runtime = [
 	"pallet-bounties/try-runtime",
 	"pallet-glutton/try-runtime",
 	"pallet-salary/try-runtime",
+	"pallet-parameters/try-runtime",
+	"pallet-verify-signature/try-runtime",
+	"pallet-elections-phragmen/try-runtime",
+	"pallet-membership/try-runtime",
 	"sp-runtime/try-runtime",
 ]
 

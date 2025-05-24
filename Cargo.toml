@@ -84,7 +84,6 @@ pallet-treasury = { version = "39.0.0", default-features = false }
 pallet-sudo = { version = "40.0.0", default-features = false }
 pallet-timestamp = { version = "39.0.0", default-features = false }
 pallet-transaction-payment-rpc-runtime-api = { version = "40.0.0", default-features = false }
-pallet-democracy = { version = "40.1.0", default-features = false }
 pallet-assets = { version = "42.0.0", default-features = false }
 pallet-vesting = { version = "40.1.0", default-features = false }
 pallet-identity = { version = "40.1.0", default-features = false }

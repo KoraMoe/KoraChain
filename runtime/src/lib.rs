@@ -267,9 +267,6 @@ mod runtime {
 	#[runtime::pallet_index(18)]
 	pub type NominationPools = pallet_nomination_pools::Pallet<Runtime>;
 
-	#[runtime::pallet_index(19)]
-	pub type Democracy = pallet_democracy::Pallet<Runtime>;
-
 	#[runtime::pallet_index(20)]
 	pub type Council = pallet_collective::Pallet<Runtime, Instance1>;
 

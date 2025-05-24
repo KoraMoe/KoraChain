@@ -43,8 +43,7 @@ use frame_support::{
 	traits::{
 		tokens::{
 			imbalance::{ResolveTo},
-			pay::{PayFromAccount},
-			UnityAssetBalanceConversion
+			pay::{PayFromAccount}
 		}
 	},
 	weights::{
@@ -60,15 +59,16 @@ use frame_election_provider_support::{
 };
 use frame_support::dynamic_params::{ dynamic_pallet_params, dynamic_params };
 use frame_support::instances::{Instance1, Instance2};
-use frame_support::traits::{AsEnsureOriginWithArg, ConstBool, ConstU16, EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, InstanceFilter, LinearStoragePrice, LockIdentifier, WithdrawReasons};
+use frame_support::traits::{AsEnsureOriginWithArg, ConstU16, EitherOfDiverse, EnsureOriginWithArg, EqualPrivilegeOnly, InstanceFilter, LinearStoragePrice, LockIdentifier, WithdrawReasons};
 use frame_support::traits::fungible::{HoldConsideration, NativeFromLeft, NativeOrWithId, UnionOf};
-use frame_support::traits::tokens::GetSalary;
+use frame_support::traits::tokens::{GetSalary, UnityAssetBalanceConversion};
 use frame_support::traits::tokens::imbalance::ResolveAssetTo;
+use frame_support::traits::tokens::pay::PayAssetFromAccount;
 use pallet_asset_conversion::{AccountIdConverter, Ascending, Chain, WithFirstAsset};
 use pallet_identity::legacy::IdentityInfo;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use sp_core::crypto::KeyTypeId;
-use sp_runtime::traits::{ConvertInto, Get, IdentityLookup, Identity};
+use sp_runtime::traits::{ConvertInto, Get, Identity, IdentityLookup};
 use pallet_babe::RandomnessFromOneEpochAgo;
 // Local module imports
 use super::*;
@@ -581,7 +581,6 @@ impl pallet_treasury::Config for Runtime {
 	type SpendFunds = Bounties;
 	type MaxApprovals = MaxApprovals;
 	type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
-	// Simplified configuration to avoid trait implementation issues
 	type AssetKind = ();
 	type Beneficiary = AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
@@ -687,8 +686,7 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
 			),
 			ProxyType::Governance => matches!(
 				c,
-				RuntimeCall::Democracy(..) |
-					RuntimeCall::Council(..) |
+				RuntimeCall::Council(..) |
 					RuntimeCall::Society(..) |
 					RuntimeCall::TechnicalCommittee(..) |
 					RuntimeCall::Elections(..) |
@@ -1133,71 +1131,9 @@ impl pallet_collective::Config<TechnicalCollective> for Runtime {
 	type Consideration = ();
 }
 
-parameter_types! {
-	pub const LaunchPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
-	pub const VotingPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
-	pub const FastTrackVotingPeriod: BlockNumber = 3 * 24 * 60 * MINUTES;
-	pub const MinimumDeposit: Balance = 100 * UNIT;
-	pub const EnactmentPeriod: BlockNumber = 30 * 24 * 60 * MINUTES;
-	pub const CooloffPeriod: BlockNumber = 28 * 24 * 60 * MINUTES;
-	pub const MaxProposals: u32 = 100;
-}
 
-impl pallet_democracy::Config for Runtime {
-	type WeightInfo = pallet_democracy::weights::SubstrateWeight<Runtime>;
-	type RuntimeEvent = RuntimeEvent;
-	type Scheduler = Scheduler;
-	type Preimages = Preimage;
-	type Currency = Balances;
-	type EnactmentPeriod = EnactmentPeriod;
-	type LaunchPeriod = LaunchPeriod;
-	type VotingPeriod = VotingPeriod;
-	type VoteLockingPeriod = EnactmentPeriod;
-	// Same as EnactmentPeriod
-	type MinimumDeposit = MinimumDeposit;
-	type InstantAllowed = ConstBool<true>;
-	type FastTrackVotingPeriod = FastTrackVotingPeriod;
-	type CooloffPeriod = CooloffPeriod;
-	type MaxVotes = ConstU32<100>;
-	type MaxProposals = MaxProposals;
-	type MaxDeposits = ConstU32<100>;
-	type MaxBlacklisted = ConstU32<100>;
-	/// A straight majority of the council can decide what their next motion is.
-	type ExternalOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 1, 2>;
-	/// A super-majority can have the next scheduled referendum be a straight majority-carries vote.
-	type ExternalMajorityOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 3, 4>;
-	/// A unanimous council can have the next scheduled referendum be a straight default-carries
-	/// (NTB) vote.
-	type ExternalDefaultOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 1, 1>;
-	type SubmitOrigin = EnsureSigned<AccountId>;
-	/// Two thirds of the technical committee can have an ExternalMajority/ExternalDefault vote
-	/// be tabled immediately and with a shorter voting/enactment period.
-	type FastTrackOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 2, 3>;
-	type InstantOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 1, 1>;
-	// To cancel a proposal which has been passed, 2/3 of the council must agree to it.
-	type CancellationOrigin =
-	pallet_collective::EnsureProportionAtLeast<AccountId, CouncilCollective, 2, 3>;
-	type BlacklistOrigin = EitherOfDiverse<
-		EnsureRoot<AccountId>,
-		pallet_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 1, 1>,
-	>;
-	// To cancel a proposal before it has been passed, the technical committee must be unanimous or
-	// Root must agree.
-	type CancelProposalOrigin = EitherOfDiverse<
-		EnsureRoot<AccountId>,
-		pallet_collective::EnsureProportionAtLeast<AccountId, TechnicalCollective, 1, 1>,
-	>;
-	// Any single technical committee member may veto a coming council proposal, however they can
-	// only do it once and it lasts only for the cool-off period.
-	type VetoOrigin = pallet_collective::EnsureMember<AccountId, TechnicalCollective>;
-	type PalletsOrigin = OriginCaller;
-	type Slash = Treasury;
-}
+
+
 
 impl pallet_timestamp::Config for Runtime {
 	/// A timestamp: milliseconds since the unix epoch.
