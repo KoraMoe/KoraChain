@@ -4504,29 +4504,24 @@ dependencies = [
  "pallet-bags-list",
  "pallet-balances",
  "pallet-bounties",
- "pallet-collective",
+ "pallet-child-bounties",
  "pallet-conviction-voting",
  "pallet-delegated-staking",
  "pallet-election-provider-multi-phase",
- "pallet-elections-phragmen",
  "pallet-glutton",
  "pallet-grandpa",
  "pallet-identity",
  "pallet-im-online",
- "pallet-membership",
  "pallet-nomination-pools",
  "pallet-nomination-pools-runtime-api",
  "pallet-offences",
  "pallet-parameters",
  "pallet-preimage",
  "pallet-proxy",
- "pallet-ranked-collective",
  "pallet-recovery",
  "pallet-referenda",
- "pallet-salary",
  "pallet-scheduler",
  "pallet-session",
- "pallet-society",
  "pallet-staking",
  "pallet-staking-reward-curve",
  "pallet-staking-runtime-api",
@@ -6175,16 +6170,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-collective"
-version = "40.1.0"
+name = "pallet-child-bounties"
+version = "39.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47a387e0ed8cf134d3a8f2c229ef19e7558537cf67d113d4fe2558415a8f49f1"
+checksum = "d077d3b33d4f4f8fb92197def4498e2f18a3ff476f65bb7557a766406c5feb1a"
 dependencies = [
- "docify",
  "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
+ "pallet-bounties",
+ "pallet-treasury",
  "parity-scale-codec",
  "scale-info",
  "sp-core",
@@ -6260,25 +6256,6 @@ dependencies = [
  "parity-scale-codec",
  "sp-npos-elections",
  "sp-runtime",
-]
-
-[[package]]
-name = "pallet-elections-phragmen"
-version = "41.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cf5efc33f6a2eeb167c4b8f065da0417bf76898982f413aca07fae7e1571efc"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "log",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-io",
- "sp-npos-elections",
- "sp-runtime",
- "sp-staking",
 ]
 
 [[package]]
@@ -6358,23 +6335,6 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-staking",
-]
-
-[[package]]
-name = "pallet-membership"
-version = "40.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eca06af7edcaa916effec49edc0ebbc41ca7a7c00c9824eafbe729a36a73fb0d"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "log",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-io",
- "sp-runtime",
 ]
 
 [[package]]
@@ -6470,25 +6430,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-ranked-collective"
-version = "40.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80e86c56283de489f9600e9d22cc671def37848ab82962db804ba1ef845a824f"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "impl-trait-for-tuples",
- "log",
- "parity-scale-codec",
- "scale-info",
- "sp-arithmetic",
- "sp-core",
- "sp-io",
- "sp-runtime",
-]
-
-[[package]]
 name = "pallet-recovery"
 version = "40.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6520,19 +6461,6 @@ dependencies = [
  "sp-arithmetic",
  "sp-io",
  "sp-runtime",
-]
-
-[[package]]
-name = "pallet-salary"
-version = "25.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a9c67129afba5f050e60b93f40006334a148cc4dc4b7890d73d92a4c27ad979"
-dependencies = [
- "log",
- "pallet-ranked-collective",
- "parity-scale-codec",
- "polkadot-sdk-frame",
- "scale-info",
 ]
 
 [[package]]
@@ -6573,24 +6501,6 @@ dependencies = [
  "sp-staking",
  "sp-state-machine",
  "sp-trie",
-]
-
-[[package]]
-name = "pallet-society"
-version = "40.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5af40e2fabefa91aeb8a872170242c40056aaf7658c8ac7e6f0b4bfc75263b5"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "log",
- "parity-scale-codec",
- "rand_chacha 0.3.1",
- "scale-info",
- "sp-arithmetic",
- "sp-io",
- "sp-runtime",
 ]
 
 [[package]]

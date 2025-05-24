@@ -247,7 +247,7 @@ mod runtime {
 	pub type Session = pallet_session;
 
 	#[runtime::pallet_index(12)]
-	pub type VoterList = pallet_bags_list::Pallet<Runtime, Instance1>;
+	pub type VoterList = pallet_bags_list::Pallet<Runtime>;
 
 	#[runtime::pallet_index(13)]
 	pub type Offences = pallet_offences::Pallet<Runtime>;
@@ -267,79 +267,58 @@ mod runtime {
 	#[runtime::pallet_index(18)]
 	pub type NominationPools = pallet_nomination_pools::Pallet<Runtime>;
 
-	#[runtime::pallet_index(20)]
-	pub type Council = pallet_collective::Pallet<Runtime, Instance1>;
-
-	#[runtime::pallet_index(21)]
-	pub type TechnicalCommittee = pallet_collective::Pallet<Runtime, Instance2>;
-
-	#[runtime::pallet_index(22)]
+	#[runtime::pallet_index(19)]
 	pub type Assets = pallet_assets::Pallet<Runtime, Instance1>;
 
-	#[runtime::pallet_index(23)]
+	#[runtime::pallet_index(20)]
 	pub type PoolAssets = pallet_assets::Pallet<Runtime, Instance2>;
 
-	#[runtime::pallet_index(24)]
+	#[runtime::pallet_index(21)]
 	pub type Vesting = pallet_vesting::Pallet<Runtime>;
 
-	#[runtime::pallet_index(25)]
+	#[runtime::pallet_index(22)]
 	pub type Identity = pallet_identity::Pallet<Runtime>;
 
-	#[runtime::pallet_index(26)]
+	#[runtime::pallet_index(23)]
 	pub type Preimage = pallet_preimage::Pallet<Runtime>;
 
-	#[runtime::pallet_index(27)]
+	#[runtime::pallet_index(24)]
 	pub type Scheduler = pallet_scheduler::Pallet<Runtime>;
 
-	#[runtime::pallet_index(28)]
+	#[runtime::pallet_index(25)]
 	pub type AssetConversion = pallet_asset_conversion::Pallet<Runtime>;
 
-	#[runtime::pallet_index(29)]
+	#[runtime::pallet_index(26)]
 	pub type AssetRate = pallet_asset_rate::Pallet<Runtime>;
 
-	#[runtime::pallet_index(30)]
-	pub type Referenda = pallet_referenda::Pallet<Runtime, Instance1>;
+	#[runtime::pallet_index(27)]
+	pub type Referenda = pallet_referenda::Pallet<Runtime>;
 
-	#[runtime::pallet_index(31)]
-	pub type RankedPolls = pallet_referenda::Pallet<Runtime, Instance2>;
-
-	#[runtime::pallet_index(32)]
+	#[runtime::pallet_index(28)]
 	pub type ConvictionVoting = pallet_conviction_voting::Pallet<Runtime>;
 
-	#[runtime::pallet_index(33)]
-	pub type RankedCollective = pallet_ranked_collective::Pallet<Runtime>;
-
-	#[runtime::pallet_index(34)]
+	#[runtime::pallet_index(29)]
 	pub type Proxy = pallet_proxy::Pallet<Runtime>;
 
-	#[runtime::pallet_index(35)]
-	pub type Society = pallet_society::Pallet<Runtime>;
-
-	#[runtime::pallet_index(36)]
+	#[runtime::pallet_index(30)]
 	pub type Recovery = pallet_recovery::Pallet<Runtime>;
 
-	#[runtime::pallet_index(37)]
+	#[runtime::pallet_index(31)]
 	pub type Bounties = pallet_bounties::Pallet<Runtime>;
 
-	#[runtime::pallet_index(38)]
+	#[runtime::pallet_index(32)]
 	pub type Glutton = pallet_glutton::Pallet<Runtime>;
 
-	#[runtime::pallet_index(39)]
-	pub type Salary = pallet_salary::Pallet<Runtime>;
-
-	#[runtime::pallet_index(40)]
-	pub type TechnicalMembership = pallet_membership::Pallet<Runtime, Instance1>;
-
-	#[runtime::pallet_index(41)]
-	pub type Elections = pallet_elections_phragmen::Pallet<Runtime>;
-
-	#[runtime::pallet_index(42)]
+	#[runtime::pallet_index(33)]
 	pub type Parameters = pallet_parameters::Pallet<Runtime>;
 
-	#[runtime::pallet_index(43)]
+	#[runtime::pallet_index(34)]
 	pub type VerifySignature = pallet_verify_signature::Pallet<Runtime>;
 
+	#[runtime::pallet_index(35)]
+	pub type ChildBounties = pallet_child_bounties::Pallet<Runtime>;
+
 	// Include the custom logic from the pallet-template in the runtime.
-	#[runtime::pallet_index(100)]
+	#[runtime::pallet_index(36)]
 	pub type Template = pallet_template;
 }
