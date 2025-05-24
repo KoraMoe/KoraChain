@@ -78,6 +78,8 @@ sp-core.default-features = true
 sp-core.workspace = true
 sp-genesis-builder.default-features = true
 sp-genesis-builder.workspace = true
+sc-chain-spec.workspace = true
+sc-chain-spec.default-features = false
 sp-inherents.default-features = true
 sp-inherents.workspace = true
 sp-io.default-features = true
@@ -98,7 +100,7 @@ sc-sync-state-rpc = { workspace = true, default-features = true }
 substrate-state-trie-migration-rpc = { workspace = true, default-features = true }
 substrate-frame-rpc-system.default-features = true
 substrate-frame-rpc-system.workspace = true
-
+serde = { features = ["derive"], workspace = true, default-features = true }
 [build-dependencies]
 substrate-build-script-utils.default-features = true
 substrate-build-script-utils.workspace = true

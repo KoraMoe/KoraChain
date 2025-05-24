@@ -22,7 +22,6 @@ frame-system-benchmarking = { optional = true, workspace = true }
 frame-system-rpc-runtime-api.workspace = true
 frame-system.workspace = true
 frame-try-runtime = { optional = true, workspace = true }
-
 pallet-babe.workspace = true
 pallet-balances.workspace = true
 pallet-grandpa.workspace = true
@@ -44,6 +43,30 @@ pallet-timestamp.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
 pallet-transaction-payment.workspace = true
 pallet-bags-list.workspace = true
+pallet-democracy.workspace = true
+pallet-assets.workspace = true
+pallet-vesting.workspace = true
+pallet-identity.workspace = true
+pallet-society.workspace = true
+pallet-recovery.workspace = true
+pallet-bounties.workspace = true
+pallet-glutton.workspace = true
+pallet-salary.workspace = true
+pallet-preimage.workspace = true
+pallet-collective.workspace = true
+pallet-scheduler.workspace = true
+pallet-asset-conversion.workspace = true
+pallet-asset-rate.workspace = true
+pallet-referenda.workspace = true
+pallet-conviction-voting.workspace = true
+pallet-ranked-collective.workspace = true
+pallet-proxy.workspace = true
+pallet-membership.workspace = true
+pallet-elections-phragmen.workspace = true
+pallet-parameters.workspace = true
+pallet-verify-signature.workspace = true
+pallet-nomination-pools-runtime-api.workspace = true
+pallet-staking-runtime-api.workspace = true
 scale-info = { features = ["derive", "serde"], workspace = true }
 serde_json = { workspace = true, default-features = false, features = ["alloc"] }
 sp-api.workspace = true
@@ -98,6 +121,31 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+	"pallet-democracy/std",
+	"pallet-assets/std",
+	"pallet-vesting/std",
+	"pallet-identity/std",
+	"pallet-preimage/std",
+	"pallet-collective/std",
+	"pallet-scheduler/std",
+	"pallet-asset-conversion/std",
+	"pallet-asset-rate/std",
+	"pallet-referenda/std",
+	"pallet-conviction-voting/std",
+	"pallet-ranked-collective/std",
+	"pallet-proxy/std",
+	"pallet-society/std",
+	"pallet-recovery/std",
+	"pallet-bounties/std",
+	"pallet-glutton/std",
+	"pallet-salary/std",
+	"pallet-parameters/std",
+	"pallet-verify-signature/std",
+	"pallet-elections-phragmen/std",
+	"pallet-membership/std",
+	"pallet-nomination-pools-runtime-api/std",
+	"pallet-staking-runtime-api/std",
+	"pallet-nomination-pools/std",
 	"scale-info/std",
 	"serde_json/std",
 	"sp-api/std",
@@ -131,6 +179,27 @@ runtime-benchmarks = [
 	"pallet-offences/runtime-benchmarks",
 	"pallet-utility/runtime-benchmarks",
 	"pallet-bags-list/runtime-benchmarks",
+	"pallet-election-provider-multi-phase/runtime-benchmarks",
+	"pallet-nomination-pools/runtime-benchmarks",
+	"pallet-delegated-staking/runtime-benchmarks",
+	"pallet-democracy/runtime-benchmarks",
+	"pallet-assets/runtime-benchmarks",
+	"pallet-vesting/runtime-benchmarks",
+	"pallet-identity/runtime-benchmarks",
+	"pallet-preimage/runtime-benchmarks",
+	"pallet-collective/runtime-benchmarks",
+	"pallet-scheduler/runtime-benchmarks",
+	"pallet-asset-conversion/runtime-benchmarks",
+	"pallet-asset-rate/runtime-benchmarks",
+	"pallet-referenda/runtime-benchmarks",
+	"pallet-conviction-voting/runtime-benchmarks",
+	"pallet-ranked-collective/runtime-benchmarks",
+	"pallet-proxy/runtime-benchmarks",
+	"pallet-society/runtime-benchmarks",
+	"pallet-recovery/runtime-benchmarks",
+	"pallet-bounties/runtime-benchmarks",
+	"pallet-glutton/runtime-benchmarks",
+	"pallet-salary/runtime-benchmarks",
 	"frame-election-provider-support/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
@@ -162,6 +231,24 @@ try-runtime = [
 	"pallet-template/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
+	"pallet-democracy/try-runtime",
+	"pallet-assets/try-runtime",
+	"pallet-vesting/try-runtime",
+	"pallet-identity/try-runtime",
+	"pallet-preimage/try-runtime",
+	"pallet-collective/try-runtime",
+	"pallet-scheduler/try-runtime",
+	"pallet-asset-conversion/try-runtime",
+	"pallet-asset-rate/try-runtime",
+	"pallet-referenda/try-runtime",
+	"pallet-conviction-voting/try-runtime",
+	"pallet-ranked-collective/try-runtime",
+	"pallet-proxy/try-runtime",
+	"pallet-society/try-runtime",
+	"pallet-recovery/try-runtime",
+	"pallet-bounties/try-runtime",
+	"pallet-glutton/try-runtime",
+	"pallet-salary/try-runtime",
 	"sp-runtime/try-runtime",
 ]
 
