@@ -61,6 +61,7 @@ pallet-verify-signature.workspace = true
 pallet-nomination-pools-runtime-api.workspace = true
 pallet-staking-runtime-api.workspace = true
 pallet-child-bounties.workspace = true
+pallet-whitelist.workspace = true
 scale-info = { features = ["derive", "serde"], workspace = true }
 serde_json = { workspace = true, default-features = false, features = ["alloc"] }
 sp-api.workspace = true
@@ -134,6 +135,7 @@ std = [
 	"pallet-staking-runtime-api/std",
 	"pallet-nomination-pools/std",
 	"pallet-child-bounties/std",
+	"pallet-whitelist/std",
 	"scale-info/std",
 	"serde_json/std",
 	"sp-api/std",
@@ -192,6 +194,7 @@ runtime-benchmarks = [
 	"pallet-template/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-transaction-payment/runtime-benchmarks",
+	"pallet-whitelist/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]
 
@@ -233,6 +236,7 @@ try-runtime = [
 	"pallet-parameters/try-runtime",
 	"pallet-verify-signature/try-runtime",
 	"pallet-child-bounties/try-runtime",
+	"pallet-whitelist/try-runtime",
 	"sp-runtime/try-runtime",
 ]
 

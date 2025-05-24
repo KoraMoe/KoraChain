@@ -101,6 +101,7 @@ pallet-verify-signature = { version = "0.3.0", default-features = false }
 pallet-nomination-pools-runtime-api = { version = "36.0.0", default-features = false }
 pallet-staking-runtime-api = { version = "26.0.0", default-features = false }
 pallet-child-bounties = { version = "39.0.0", default-features = false }
+pallet-whitelist = { version = "39.0.0", default-features = false }
 scale-info = { version = "2.11.6", default-features = false }
 serde_json = { version = "1.0.140", default-features = false }
 sp-consensus-grandpa = { version = "23.1.0", default-features = false }
