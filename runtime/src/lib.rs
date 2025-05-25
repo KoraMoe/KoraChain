@@ -320,8 +320,4 @@ mod runtime {
 
 	#[runtime::pallet_index(36)]
 	pub type Whitelist = pallet_whitelist::Pallet<Runtime>;
-
-	// Include the custom logic from the pallet-template in the runtime.
-	#[runtime::pallet_index(37)]
-	pub type Template = pallet_template;
 }

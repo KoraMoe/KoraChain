@@ -1,7 +1,7 @@
 [package]
 name = "kora-chain-runtime"
 description = "KoraChain Logic Layer, powered by Substrate."
-version = "0.1.0"
+version = { workspace = true }
 license = "Apache-2.0"
 authors = { workspace = true }
 homepage = { workspace = true }
@@ -38,7 +38,6 @@ pallet-election-provider-multi-phase.workspace = true
 pallet-delegated-staking.workspace = true
 pallet-treasury.workspace = true
 pallet-sudo.workspace = true
-pallet-template.workspace = true
 pallet-timestamp.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
 pallet-transaction-payment.workspace = true
@@ -112,7 +111,6 @@ std = [
 	"pallet-treasury/std",
 	"pallet-bags-list/std",
 	"pallet-sudo/std",
-	"pallet-template/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
@@ -191,7 +189,6 @@ runtime-benchmarks = [
 	"frame-election-provider-support/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
-	"pallet-template/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-transaction-payment/runtime-benchmarks",
 	"pallet-whitelist/runtime-benchmarks",
@@ -217,7 +214,6 @@ try-runtime = [
 	"pallet-utility/try-runtime",
 	"pallet-treasury/try-runtime",
 	"pallet-sudo/try-runtime",
-	"pallet-template/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
 	"pallet-assets/try-runtime",
