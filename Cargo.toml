@@ -4,7 +4,7 @@ authors = ["Kora Lab <lab@kora.moe>"]
 homepage = "https://kora.moe"
 repository = "https://github.com/KoraMoe/KoraChain.git"
 edition = "2021"
-version = "0.1.0"
+version = "0.1.1"
 
 [workspace]
 members = [
