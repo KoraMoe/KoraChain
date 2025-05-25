@@ -3,8 +3,11 @@ FROM docker.io/paritytech/ci-unified:latest as builder
 WORKDIR /polkadot
 COPY . /polkadot
 
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+ENV SOURCE_DATE_EPOCH=1600000000
+
 RUN cargo fetch
-RUN cargo build --locked --release
+RUN cargo build --locked --release --profile production
 
 FROM docker.io/parity/base-bin:latest
 
