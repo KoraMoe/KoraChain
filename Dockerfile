@@ -13,13 +13,17 @@ RUN apt-get update && \
 WORKDIR /polkadot
 COPY . /polkadot
 
-ENV RUSTFLAGS="-C target-feature=-crt-static"
+ENV RUSTFLAGS="-C target-feature=-crt-static -C link-arg=-Wl,--build-id=none"
 ENV SOURCE_DATE_EPOCH=1600000000
 ENV CARGO_PROFILE_RELEASE_DEBUG=0
 ENV CARGO_PROFILE_PRODUCTION_DEBUG=0
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+ENV CARGO_BUILD_JOBS=1
 
 RUN cargo fetch
 RUN cargo build --locked --profile production
+RUN strip target/production/kora-chain-node
 
 # Runtime stage with minimal Ubuntu image
 FROM ubuntu:22.04
