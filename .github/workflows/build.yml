@@ -20,6 +20,9 @@ jobs:
   build:
     name: Build Binaries
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -77,37 +80,6 @@ jobs:
           # Verify WASM was built
           ls -la target/production/wbuild/kora-chain-runtime/
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-
-      - name: Upload node binary to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/production/kora-chain-node
-          asset_name: kora-chain-node-${{ github.ref_name }}
-          asset_content_type: application/octet-stream
-
-      - name: Upload runtime WASM to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/production/wbuild/kora-chain-runtime/kora_chain_runtime.compact.compressed.wasm
-          asset_name: kora_chain_runtime-${{ github.ref_name }}.compact.compressed.wasm
-          asset_content_type: application/wasm
-
       - name: Generate build checksums
         run: |
           cd target/production
@@ -115,25 +87,22 @@ jobs:
           cd wbuild/kora-chain-runtime
           sha256sum kora_chain_runtime.compact.compressed.wasm > kora_chain_runtime.compact.compressed.wasm.sha256
 
-      - name: Upload node binary checksum to release
-        uses: actions/upload-release-asset@v1
+      - name: Create Release and Upload Assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/production/kora-chain-node.sha256
-          asset_name: kora-chain-node-${{ github.ref_name }}.sha256
-          asset_content_type: text/plain
+        run: |
+          # Create release
+          gh release create ${{ github.ref_name }} \
+            --title "Release ${{ github.ref_name }}" \
+            --notes "Automated release of KoraChain ${{ github.ref_name }}" \
+            --latest
 
-      - name: Upload runtime WASM checksum to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/production/wbuild/kora-chain-runtime/kora_chain_runtime.compact.compressed.wasm.sha256
-          asset_name: kora_chain_runtime-${{ github.ref_name }}.compact.compressed.wasm.sha256
-          asset_content_type: text/plain
+          # Upload assets
+          gh release upload ${{ github.ref_name }} \
+            target/production/kora-chain-node#kora-chain-node-${{ github.ref_name }} \
+            target/production/kora-chain-node.sha256#kora-chain-node-${{ github.ref_name }}.sha256 \
+            target/production/wbuild/kora-chain-runtime/kora_chain_runtime.compact.compressed.wasm#kora_chain_runtime-${{ github.ref_name }}.compact.compressed.wasm \
+            target/production/wbuild/kora-chain-runtime/kora_chain_runtime.compact.compressed.wasm.sha256#kora_chain_runtime-${{ github.ref_name }}.compact.compressed.wasm.sha256
 
   docker:
     name: Build Docker Image
