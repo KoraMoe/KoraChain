@@ -97,8 +97,10 @@ jobs:
     name: Build Docker Image
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: read
+      packages: write
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -142,7 +144,7 @@ jobs:
             SOURCE_DATE_EPOCH=1600000000
 
       - name: Generate artifact attestation
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.build-and-push.outputs.digest != ''
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ghcr.io/${{ github.repository }}
