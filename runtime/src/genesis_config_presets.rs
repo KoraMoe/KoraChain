@@ -1,20 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 use crate::{AccountId, Balance, BalancesConfig, RuntimeGenesisConfig, SessionConfig, SessionKeys, StakingConfig, SudoConfig, UNIT};
 use alloc::{vec, vec::Vec};
 use frame_support::build_struct_json_patch;
@@ -22,15 +5,20 @@ use sp_consensus_babe::AuthorityId as BabeId;
 use serde_json::Value;
 use sp_consensus_grandpa::AuthorityId as GrandpaId;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
-use sp_core::crypto::get_public_from_string_or_panic;
+use sp_core::crypto::{get_public_from_string_or_panic, Ss58Codec};
 use sp_core::sr25519;
 use sp_genesis_builder::{self, PresetId};
 use sp_runtime::Perbill;
 use sp_staking::StakerStatus;
-use pallet_staking::ValidatorPrefs;
 
 pub const ENDOWMENT: Balance = 10_000_000 * UNIT;
 pub const STASH: Balance = ENDOWMENT / 10;
+pub const MAX_VALIDATORS: u32 = 10;
+pub const MAX_NOMINATORS: u32 = 100;
+pub const MINIMUM_VALIDATOR_COUNT: u32 = 1;
+pub const SLASH_REWARD_FRACTION: Perbill = Perbill::from_percent(10);
+
+pub const CHANTO_TESTNET_PRESET: &str = "kora_chanto_testnet";
 
 pub type Staker = (AccountId, AccountId, Balance, StakerStatus<AccountId>);
 
@@ -42,14 +30,6 @@ pub fn validator(account: AccountId) -> Staker {
 pub fn nominator(account: AccountId, targets: Vec<AccountId>) -> Staker {
 	// nominator, controller, stash, staker status with targets to nominate
 	(account.clone(), account, STASH, StakerStatus::Nominator(targets))
-}
-
-/// Create default validator preferences with a commission rate
-pub fn default_validator_prefs() -> ValidatorPrefs {
-	ValidatorPrefs {
-		commission: Perbill::from_percent(5),
-		blocked: false,
-	}
 }
 
 pub fn session_keys(
@@ -68,23 +48,37 @@ pub fn session_keys_from_seed(seed: &str) -> SessionKeys {
 	)
 }
 
-pub fn authority_keys_from_seed(seed: &str) -> (AccountId, AccountId, SessionKeys) {
+pub fn session_keys_from_address(sr_addr: &str, ed_addr: &str) -> SessionKeys {
+	session_keys(
+		GrandpaId::from_ss58check(ed_addr).expect("Bad ss58 address"),
+		BabeId::from_ss58check(sr_addr).expect("Bad ss58 address"),
+		ImOnlineId::from_ss58check(sr_addr).expect("Bad ss58 address"),
+	)
+}
+
+pub fn authority_keys_from_seed(seed: &str) -> (AccountId, SessionKeys) {
 	(
-		get_public_from_string_or_panic::<sr25519::Public>(&alloc::format!("{seed}//stash")).into(),
 		get_public_from_string_or_panic::<sr25519::Public>(seed).into(),
 		session_keys_from_seed(seed),
 	)
 }
 
+pub fn authority_keys_from_address(sr_addr: &str, ed_addr: &str) -> (AccountId, SessionKeys) {
+	let sr_addr_account = AccountId::from_ss58check(sr_addr).expect("Bad ss58 address");
+	(
+		sr_addr_account,
+		session_keys_from_address(sr_addr, ed_addr),
+	)
+}
+
 // Returns the genesis config presets populated with given parameters.
-fn testnet_genesis(
+fn generate_genesis_config(
 	initial_authorities: Vec<(AccountId, AccountId, SessionKeys)>,
 	root_key: AccountId,
 	endowed_accounts: Vec<AccountId>,
 	stakers: Vec<Staker>,
 ) -> Value {
 	let validator_count = initial_authorities.len() as u32;
-	let minimum_validator_count = validator_count;
 
 	build_struct_json_patch!(RuntimeGenesisConfig {
 		balances: BalancesConfig {
@@ -102,16 +96,16 @@ fn testnet_genesis(
 		},
 		staking: StakingConfig {
 			validator_count,
-			max_validator_count: Some(10),
-			max_nominator_count: Some(100),
-			minimum_validator_count,
+			max_validator_count: Some(MAX_VALIDATORS),
+			max_nominator_count: Some(MAX_NOMINATORS),
+			minimum_validator_count: MINIMUM_VALIDATOR_COUNT,
 			invulnerables: initial_authorities
 				.iter()
 				.map(|x| x.0.clone())
 				.collect::<Vec<_>>()
 				.try_into()
 				.expect("Too many invulnerable validators: upper limit is MaxInvulnerables from pallet staking config"),
-			slash_reward_fraction: Perbill::from_percent(10),
+			slash_reward_fraction: SLASH_REWARD_FRACTION,
 			stakers,
 			..Default::default()
 		},
@@ -121,33 +115,51 @@ fn testnet_genesis(
 
 /// Return the development genesis config.
 pub fn development_config_genesis() -> Value {
-	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, bob, _bob_session_keys) = authority_keys_from_seed("Bob");
+	let (alice, alice_session_keys) = authority_keys_from_seed("Alice");
+	let (bob, _bob_session_keys) = authority_keys_from_seed("Bob");
 
-	testnet_genesis(
-		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
+	generate_genesis_config(
+		vec![(alice.clone(), alice.clone(), alice_session_keys)],
 		alice.clone(),
-		vec![alice.clone(), alice_stash.clone(), bob.clone(), bob_stash.clone()],
+		vec![alice.clone(), bob.clone()],
 		vec![
-			validator(alice_stash.clone()),
-			nominator(bob_stash.clone(), vec![alice_stash.clone()]),
+			validator(alice.clone()),
+			nominator(bob.clone(),vec![alice.clone()]),
 		],
 	)
 }
 
 /// Return the local genesis config preset.
 pub fn local_config_genesis() -> Value {
-	let (alice_stash, alice, alice_session_keys) = authority_keys_from_seed("Alice");
-	let (bob_stash, bob, _bob_session_keys) = authority_keys_from_seed("Bob");
+	let (alice, alice_session_keys) = authority_keys_from_seed("Alice");
+	let (bob, bob_session_keys) = authority_keys_from_seed("Bob");
+	let (charlie, _charlie_session_keys) = authority_keys_from_seed("Charlie");
 
-	testnet_genesis(
-		vec![(alice_stash.clone(), alice_stash.clone(), alice_session_keys)],
-		alice.clone(),
-		vec![alice.clone(), alice_stash.clone(), bob.clone(), bob_stash.clone()],
+	generate_genesis_config(
 		vec![
-			validator(alice_stash.clone()),
-			nominator(bob_stash.clone(), vec![alice_stash.clone()]),
+			(alice.clone(), alice.clone(), alice_session_keys),
+			(bob.clone(), bob.clone(), bob_session_keys)
 		],
+		alice.clone(),
+		vec![alice.clone(), bob.clone(), charlie.clone()],
+		vec![
+			validator(alice.clone()),
+			validator(bob.clone()),
+			nominator(charlie.clone(), vec![alice.clone(), bob.clone()]),
+		],
+	)
+}
+
+pub fn chanto_testnet_config_genesis() -> Value {
+	let default_validator_sr_addr = "5FL9Zu4bpYu9WfCed9rMXyMLpnATMkWYnJ6CT2Tij2tVrBa1";
+	let default_validator_ed_addr = "5EufNDyR3KUbHBPfDDSBFiyN77DRsdECtynzhwoTkV31k5cC";
+	let (default_validator, default_validator_session_keys) = authority_keys_from_address(default_validator_sr_addr, default_validator_ed_addr);
+
+	generate_genesis_config(
+		vec![(default_validator.clone(), default_validator.clone(), default_validator_session_keys)],
+		default_validator.clone(),
+		vec![default_validator.clone()],
+		vec![validator(default_validator.clone())],
 	)
 }
 
@@ -156,6 +168,7 @@ pub fn get_preset(id: &PresetId) -> Option<Vec<u8>> {
 	let patch = match id.as_ref() {
 		sp_genesis_builder::DEV_RUNTIME_PRESET => development_config_genesis(),
 		sp_genesis_builder::LOCAL_TESTNET_RUNTIME_PRESET => local_config_genesis(),
+		CHANTO_TESTNET_PRESET => chanto_testnet_config_genesis(),
 		_ => return None,
 	};
 	Some(
@@ -170,5 +183,6 @@ pub fn preset_names() -> Vec<PresetId> {
 	vec![
 		PresetId::from(sp_genesis_builder::DEV_RUNTIME_PRESET),
 		PresetId::from(sp_genesis_builder::LOCAL_TESTNET_RUNTIME_PRESET),
+		PresetId::from(CHANTO_TESTNET_PRESET),
 	]
 }
