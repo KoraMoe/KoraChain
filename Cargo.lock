@@ -4508,7 +4508,6 @@ dependencies = [
  "pallet-conviction-voting",
  "pallet-delegated-staking",
  "pallet-election-provider-multi-phase",
- "pallet-glutton",
  "pallet-grandpa",
  "pallet-identity",
  "pallet-im-online",
@@ -6255,25 +6254,6 @@ dependencies = [
  "frame-system",
  "parity-scale-codec",
  "sp-npos-elections",
- "sp-runtime",
-]
-
-[[package]]
-name = "pallet-glutton"
-version = "26.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95124be4eec7b29660608176b269b184e2f71f32e7cf73af32bc93be1c21cf06"
-dependencies = [
- "blake2 0.10.6",
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "log",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-inherents",
- "sp-io",
  "sp-runtime",
 ]
 

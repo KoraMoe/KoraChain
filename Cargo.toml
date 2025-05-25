@@ -94,7 +94,6 @@ pallet-conviction-voting = { version = "40.1.0", default-features = false }
 pallet-proxy = { version = "40.1.0", default-features = false }
 pallet-recovery = { version = "40.0.0", default-features = false }
 pallet-bounties = { version = "39.0.0", default-features = false }
-pallet-glutton = { version = "26.0.0", default-features = false }
 pallet-parameters = { version = "0.11.0", default-features = false }
 pallet-verify-signature = { version = "0.3.0", default-features = false }
 pallet-nomination-pools-runtime-api = { version = "36.0.0", default-features = false }

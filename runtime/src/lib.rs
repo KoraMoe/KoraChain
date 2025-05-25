@@ -307,17 +307,14 @@ mod runtime {
 	pub type Bounties = pallet_bounties::Pallet<Runtime>;
 
 	#[runtime::pallet_index(32)]
-	pub type Glutton = pallet_glutton::Pallet<Runtime>;
-
-	#[runtime::pallet_index(33)]
 	pub type Parameters = pallet_parameters::Pallet<Runtime>;
 
-	#[runtime::pallet_index(34)]
+	#[runtime::pallet_index(33)]
 	pub type VerifySignature = pallet_verify_signature::Pallet<Runtime>;
 
-	#[runtime::pallet_index(35)]
+	#[runtime::pallet_index(34)]
 	pub type ChildBounties = pallet_child_bounties::Pallet<Runtime>;
 
-	#[runtime::pallet_index(36)]
+	#[runtime::pallet_index(35)]
 	pub type Whitelist = pallet_whitelist::Pallet<Runtime>;
 }
