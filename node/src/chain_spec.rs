@@ -20,6 +20,10 @@ pub struct Extensions {
 /// Specialized `ChainSpec`. This is a specialization of the general Substrate ChainSpec type.
 pub type ChainSpec = sc_service::GenericChainSpec<Extensions>;
 
+pub fn chanto_testnet_config() -> Result<ChainSpec, String> {
+	ChainSpec::from_json_bytes(&include_bytes!("../chain-specs/chanto-testnet.json")[..])
+}
+
 pub fn development_chain_spec() -> Result<ChainSpec, String> {
 	let mut properties = sc_service::Properties::new();
 	properties.insert("tokenSymbol".into(), "KORA".into());

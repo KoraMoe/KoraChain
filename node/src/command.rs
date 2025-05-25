@@ -39,7 +39,8 @@ impl SubstrateCli for Cli {
 		Ok(match id {
 			"dev" => Box::new(chain_spec::development_chain_spec()?),
 			"local" => Box::new(chain_spec::local_chain_spec()?),
-			"" | "chanto" => Box::new(chain_spec::chanto_testnet_chain_spec()?),
+			"chanto-builder" => Box::new(chain_spec::chanto_testnet_chain_spec()?),
+			"" | "chanto" => Box::new(chain_spec::chanto_testnet_config()?),
 			path =>
 				Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
 		})
