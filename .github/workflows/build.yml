@@ -33,6 +33,13 @@ jobs:
           targets: wasm32-unknown-unknown
           components: rustfmt, clippy
 
+      - name: Setup additional Rust environment
+        run: |
+          rustup default stable
+          rustup update
+          rustup update nightly
+          rustup target add wasm32-unknown-unknown --toolchain nightly
+
       - name: Cache dependencies
         uses: actions/cache@v4
         with:

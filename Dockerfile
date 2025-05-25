@@ -1,7 +1,14 @@
-FROM docker.io/paritytech/ci-unified:latest as builder
+FROM rust:latest as builder
 
-# Install protobuf compiler required by litep2p
-RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/apt/lists/*
+# Install protobuf compiler and other build dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        protobuf-compiler \
+        pkg-config \
+        libssl-dev \
+        build-essential \
+        clang \
+        && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /polkadot
 COPY . /polkadot
@@ -11,15 +18,19 @@ ENV SOURCE_DATE_EPOCH=1600000000
 ENV CARGO_PROFILE_RELEASE_DEBUG=0
 ENV CARGO_PROFILE_PRODUCTION_DEBUG=0
 
-# Fix rustup toolchain issues and ensure we have the right components
-RUN rustup toolchain install stable --profile minimal --component rustfmt,clippy
-RUN rustup target add wasm32-unknown-unknown --toolchain stable
-RUN rustup default stable
-
 RUN cargo fetch
 RUN cargo build --locked --profile production
 
-FROM docker.io/parity/base-bin:latest
+# Runtime stage with minimal Ubuntu image
+FROM ubuntu:22.04
+
+# Install minimal runtime dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        ca-certificates \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get autoremove -y \
+        && apt-get clean
 
 COPY --from=builder /polkadot/target/production/kora-chain-node /usr/local/bin
 
