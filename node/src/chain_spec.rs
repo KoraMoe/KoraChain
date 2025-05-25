@@ -20,6 +20,7 @@ pub fn development_chain_spec() -> Result<ChainSpec, String> {
 	let mut properties = sc_service::Properties::new();
 	properties.insert("tokenSymbol".into(), "KORA".into());
 	properties.insert("tokenDecimals".into(), 12.into());
+	properties.insert("ss58Format".into(), 1270.into());
 
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
@@ -38,6 +39,7 @@ pub fn local_chain_spec() -> Result<ChainSpec, String> {
 	let mut properties = sc_service::Properties::new();
 	properties.insert("tokenSymbol".into(), "KORA".into());
 	properties.insert("tokenDecimals".into(), 12.into());
+	properties.insert("ss58Format".into(), 1270.into());
 
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
@@ -56,6 +58,7 @@ pub fn chanto_testnet_chain_spec() -> Result<ChainSpec, String> {
 	let mut properties = sc_service::Properties::new();
 	properties.insert("tokenSymbol".into(), "KORA".into());
 	properties.insert("tokenDecimals".into(), 12.into());
+	properties.insert("ss58Format".into(), 1270.into());
 
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
