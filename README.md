@@ -193,7 +193,7 @@ cargo clippy --all-targets --all-features
 
 ```bash
 # Build the Docker image
-docker build -t kora-chain:latest .
+docker build -t ghcr.io/koramoe/korachain:latest .
 
 # Build with specific tag
 docker build -t kora-chain:v1.0.0 .
@@ -215,26 +215,31 @@ docker run -it --rm \
   -p 9933:9933 \
   -p 9944:9944 \
   -p 9615:9615 \
-  kora-chain:latest \
+  ghcr.io/koramoe/korachain:latest \
   --dev
 
-# Run with persistent data volume
+# Run with persistent data volume (using host directory)
+# First create and set permissions for the data directory
+mkdir -p ./data
+sudo chown -R 1001:1001 ./data  # or chmod 777 ./data
+
 docker run -d \
   --name kora-chain-dev \
   -p 30333:30333 \
   -p 9933:9933 \
   -p 9944:9944 \
   -p 9615:9615 \
-  -v kora-data:/data \
-  kora-chain:latest \
+  -v $(pwd)/data:/data \
+  ghcr.io/koramoe/korachain:latest \
   --dev \
   --base-path /data
 ```
 
 #### Production Setup
 ```bash
-# Create data volume
-docker volume create kora-chain-data
+# Create and set permissions for the data directory
+mkdir -p ./data
+sudo chown -R 1001:1001 ./data  # or chmod 777 ./data
 
 # Run production container
 docker run -d \
@@ -243,11 +248,11 @@ docker run -d \
   -p 30333:30333 \
   -p 9944:9944 \
   -p 9615:9615 \
-  -v kora-chain-data:/data \
-  kora-chain:latest \
+  -v $(pwd)/data:/data \
+  ghcr.io/koramoe/korachain:latest \
   --base-path /data \
-  --chain ./chain-specs/mainnet.json \
-  --name "YourNodeName" \
+  --chain chanto \
+  --name "Alice" \
   --rpc-external \
   --rpc-cors all \
   --prometheus-external
@@ -255,14 +260,26 @@ docker run -d \
 
 ### Docker Compose Setup
 
-Create `docker-compose.yml`:
+1. **Create the data directory with correct permissions:**
+```bash
+# Create the data directory
+mkdir -p ./data
+
+# Set ownership to uid 1001 (polkadot user in container)
+sudo chown -R 1001:1001 ./data
+
+# Alternatively, if you don't have sudo access, make it world-writable
+chmod 777 ./data
+```
+
+2. **Create `docker-compose.yml`:**
 
 ```yaml
 version: '3.8'
 
 services:
   kora-chain:
-    image: kora-chain:latest
+    image: ghcr.io/koramoe/korachain:latest
     container_name: kora-chain
     restart: unless-stopped
     ports:
@@ -271,7 +288,7 @@ services:
       - "9944:9944"    # WebSocket RPC
       - "9615:9615"    # Prometheus metrics
     volumes:
-      - kora-data:/data
+      - ./data:/data
     command: [
       "--base-path", "/data",
       "--chain", "chanto",
@@ -287,12 +304,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-volumes:
-  kora-data:
 ```
 
-Run with:
+3. **Run the container:**
 ```bash
 docker-compose up -d
 ```
