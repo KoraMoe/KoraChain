@@ -5,6 +5,7 @@ use sc_chain_spec::ChainSpecExtension;
 use sc_sync_state_rpc::LightSyncStateExtension;
 use kora_chain_runtime::genesis_config_presets::CHANTO_TESTNET_PRESET;
 use sc_telemetry::TelemetryEndpoints;
+use sc_network::config::MultiaddrWithPeerId;
 
 pub const KORA_PROTOCOL_ID: &str = "kora-chain";
 
@@ -24,7 +25,6 @@ pub fn development_chain_spec() -> Result<ChainSpec, String> {
 	properties.insert("tokenSymbol".into(), "KORA".into());
 	properties.insert("tokenDecimals".into(), 12.into());
 	properties.insert("ss58Format".into(), 1270.into());
-	
 
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
@@ -72,6 +72,11 @@ pub fn chanto_testnet_chain_spec() -> Result<ChainSpec, String> {
 	properties.insert("tokenDecimals".into(), 12.into());
 	properties.insert("ss58Format".into(), 1270.into());
 
+	let boot_nodes: Vec<MultiaddrWithPeerId> =
+		vec![
+			"/dns/chanto-bootstrap.koranet.work/tcp/30333/p2p/12D3KooWQu2R8by14yjTbK7MGwa2QSTkm2JT9L9TDLiRSS4bnpok".parse().unwrap(),
+		];
+
 	Ok(ChainSpec::builder(
 		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
 		Extensions::default(),
@@ -86,6 +91,6 @@ pub fn chanto_testnet_chain_spec() -> Result<ChainSpec, String> {
 			TelemetryEndpoints::new(vec![(POLKADOT_TELEMETRY_URL.to_string(), 0)])
 				.expect("Telemetry URL is invalid"),
 		)
-		.with_boot_nodes(vec![])
+		.with_boot_nodes(boot_nodes)
 		.build())
 }
