@@ -4,7 +4,7 @@ authors = ["Kora Lab <lab@kora.moe>"]
 homepage = "https://kora.moe"
 repository = "https://github.com/KoraMoe/KoraChain.git"
 edition = "2021"
-version = "0.1.1"
+version = "0.1.2"
 
 [workspace]
 members = [
@@ -100,6 +100,7 @@ pallet-nomination-pools-runtime-api = { version = "36.0.0", default-features = f
 pallet-staking-runtime-api = { version = "26.0.0", default-features = false }
 pallet-child-bounties = { version = "39.0.0", default-features = false }
 pallet-whitelist = { version = "39.0.0", default-features = false }
+pallet-contracts = { version = "40.1.0", default-features = false }
 scale-info = { version = "2.11.6", default-features = false }
 serde_json = { version = "1.0.140", default-features = false }
 sp-consensus-grandpa = { version = "23.1.0", default-features = false }
