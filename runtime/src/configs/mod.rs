@@ -45,6 +45,8 @@ use pallet_identity::legacy::IdentityInfo;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use sp_core::crypto::KeyTypeId;
 use sp_runtime::traits::{ConstBool, ConvertInto, Get, IdentityLookup};
+#[cfg(feature = "runtime-benchmarks")]
+use sp_core::crypto::FromEntropy;
 // Local module imports
 use super::*;
 
@@ -502,6 +504,41 @@ impl pallet_utility::Config for Runtime {
 	type WeightInfo = pallet_utility::weights::SubstrateWeight<Runtime>;
 }
 
+#[cfg(feature = "runtime-benchmarks")]
+use pallet_asset_rate::AssetKindFactory;
+#[cfg(feature = "runtime-benchmarks")]
+use pallet_treasury::ArgumentsFactory;
+
+#[cfg(feature = "runtime-benchmarks")]
+pub struct AssetRateArguments;
+#[cfg(feature = "runtime-benchmarks")]
+impl AssetKindFactory<NativeOrWithId<u32>> for AssetRateArguments {
+	fn create_asset_kind(seed: u32) -> NativeOrWithId<u32> {
+		if seed % 2 > 0 {
+			NativeOrWithId::Native
+		} else {
+			NativeOrWithId::WithId(seed / 2)
+		}
+	}
+}
+
+#[cfg(feature = "runtime-benchmarks")]
+pub struct PalletTreasuryArguments;
+#[cfg(feature = "runtime-benchmarks")]
+impl ArgumentsFactory<NativeOrWithId<u32>, AccountId> for PalletTreasuryArguments {
+	fn create_asset_kind(seed: u32) -> NativeOrWithId<u32> {
+		if seed % 2 > 0 {
+			NativeOrWithId::Native
+		} else {
+			NativeOrWithId::WithId(seed / 2)
+		}
+	}
+
+	fn create_beneficiary(seed: [u8; 32]) -> AccountId {
+		AccountId::from_entropy(&mut seed.as_slice()).unwrap()
+	}
+}
+
 parameter_types! {
 	pub const SpendPeriod: BlockNumber = 1 * DAYS;
 	pub const Burn: Permill = Permill::from_percent(50);
@@ -527,7 +564,8 @@ impl pallet_treasury::Config for Runtime {
 	type WeightInfo = pallet_treasury::weights::SubstrateWeight<Runtime>;
 	type SpendFunds = Bounties;
 	type MaxApprovals = MaxApprovals;
-	type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
+	// Allow signed accounts to spend up to a certain amount
+	type SpendOrigin = EnsureWithSuccess<EnsureSigned<AccountId>, AccountId, MaxBalance>;
 	type AssetKind = NativeOrWithId<u32>;
 	type Beneficiary = AccountId;
 	type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
@@ -535,7 +573,7 @@ impl pallet_treasury::Config for Runtime {
 	type BalanceConverter = AssetRate;
 	type PayoutPeriod = SpendPayoutPeriod;
 	#[cfg(feature = "runtime-benchmarks")]
-	type BenchmarkHelper = ();
+	type BenchmarkHelper = PalletTreasuryArguments;
 	type BlockNumberProvider = System;
 }
 
@@ -709,7 +747,6 @@ impl pallet_scheduler::Config for Runtime {
 	type MaximumWeight = MaximumSchedulerWeight;
 	type ScheduleOrigin = EnsureRoot<AccountId>;
 	type OriginPrivilegeCmp = EqualPrivilegeOnly;
-	#[cfg(not(feature = "runtime-benchmarks"))]
 	type MaxScheduledPerBlock = ConstU32<50>;
 	type WeightInfo = pallet_scheduler::weights::SubstrateWeight<Runtime>;
 	type Preimages = Preimage;
@@ -747,36 +784,131 @@ pub mod dynamic_params {
 		pub static Tracks: BoundedVec<
 			pallet_referenda::Track<u16, Balance, BlockNumber>,
 			ConstU32<100>,
-		> = BoundedVec::truncate_from(vec![pallet_referenda::Track {
-			id: 0u16,
-			info: pallet_referenda::TrackInfo {
-				name: str_array("root"),
-				max_deciding: 1,
-				decision_deposit: 10,
-				prepare_period: 4,
-				decision_period: 4,
-				confirm_period: 2,
-				min_enactment_period: 4,
-				min_approval: pallet_referenda::Curve::LinearDecreasing {
-					length: Perbill::from_percent(100),
-					floor: Perbill::from_percent(50),
-					ceil: Perbill::from_percent(100),
-				},
-				min_support: pallet_referenda::Curve::LinearDecreasing {
-					length: Perbill::from_percent(100),
-					floor: Perbill::from_percent(0),
-					ceil: Perbill::from_percent(100),
+		> = BoundedVec::truncate_from(vec![
+			// Root Track - Highest privilege level
+			pallet_referenda::Track {
+				id: 0u16,
+				info: pallet_referenda::TrackInfo {
+					name: str_array("root"),
+					max_deciding: 1,
+					decision_deposit: 1000 * UNIT, // Increased from 10
+					prepare_period: 2 * HOURS,      // Increased from 4 blocks
+					decision_period: 14 * DAYS,     // Increased from 4 blocks  
+					confirm_period: 1 * DAYS,       // Increased from 2 blocks
+					min_enactment_period: 1 * DAYS, // Increased from 4 blocks
+					min_approval: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(50),
+						ceil: Perbill::from_percent(100),
+					},
+					min_support: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(0),
+						ceil: Perbill::from_percent(100),
+					},
 				},
 			},
-		}]);
+			// General Admin Track - General administrative changes
+			pallet_referenda::Track {
+				id: 1u16,
+				info: pallet_referenda::TrackInfo {
+					name: str_array("general_admin"),
+					max_deciding: 10,
+					decision_deposit: 100 * UNIT,
+					prepare_period: 1 * HOURS,
+					decision_period: 7 * DAYS,
+					confirm_period: 12 * HOURS,
+					min_enactment_period: 1 * DAYS,
+					min_approval: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(50),
+						ceil: Perbill::from_percent(100),
+					},
+					min_support: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(25),
+						ceil: Perbill::from_percent(50),
+					},
+				},
+			},
+			// Emergency Canceller Track - Cancel dangerous proposals
+			pallet_referenda::Track {
+				id: 2u16,
+				info: pallet_referenda::TrackInfo {
+					name: str_array("emergency_canceller"),
+					max_deciding: 20,
+					decision_deposit: 200 * UNIT,
+					prepare_period: 10 * MINUTES,
+					decision_period: 1 * DAYS,
+					confirm_period: 1 * HOURS,
+					min_enactment_period: 10 * MINUTES,
+					min_approval: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(60),
+						ceil: Perbill::from_percent(100),
+					},
+					min_support: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(10),
+						ceil: Perbill::from_percent(25),
+					},
+				},
+			},
+			// Emergency Killer Track - Kill proposals with deposit slashing
+			pallet_referenda::Track {
+				id: 3u16,
+				info: pallet_referenda::TrackInfo {
+					name: str_array("emergency_killer"),
+					max_deciding: 100,
+					decision_deposit: 500 * UNIT,
+					prepare_period: 10 * MINUTES,
+					decision_period: 1 * DAYS,
+					confirm_period: 1 * HOURS,
+					min_enactment_period: 10 * MINUTES,
+					min_approval: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(60),
+						ceil: Perbill::from_percent(100),
+					},
+					min_support: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(10),
+						ceil: Perbill::from_percent(25),
+					},
+				},
+			},
+			// Whitelisted Track - Fast-track for trusted proposals
+			pallet_referenda::Track {
+				id: 4u16,
+				info: pallet_referenda::TrackInfo {
+					name: str_array("whitelisted_caller"),
+					max_deciding: 100,
+					decision_deposit: 50 * UNIT,
+					prepare_period: 30 * MINUTES,
+					decision_period: 7 * DAYS,
+					confirm_period: 30 * MINUTES,
+					min_enactment_period: 30 * MINUTES,
+					min_approval: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(50),
+						ceil: Perbill::from_percent(100),
+					},
+					min_support: pallet_referenda::Curve::LinearDecreasing {
+						length: Perbill::from_percent(100),
+						floor: Perbill::from_percent(10),
+						ceil: Perbill::from_percent(50),
+					},
+				},
+			},
+		]);
 
 		/// A list mapping every origin with a track Id
 		#[codec(index = 1)]
 		pub static Origins: BoundedVec<(OriginCaller, u16), ConstU32<100>> =
-			BoundedVec::truncate_from(vec![(
-				OriginCaller::system(frame_system::RawOrigin::Root),
-				0,
-			)]);
+			BoundedVec::truncate_from(vec![
+				(OriginCaller::system(frame_system::RawOrigin::Root), 0),
+				// Add mapping for other origins when you define them
+			]);
 	}
 }
 
@@ -785,7 +917,7 @@ impl Default for RuntimeParameters {
 	fn default() -> Self {
 		RuntimeParameters::Storage(dynamic_params::storage::Parameters::BaseDeposit(
 			dynamic_params::storage::BaseDeposit,
-			Some(1 * DOLLARS),
+			Some(1 * UNIT),
 		))
 	}
 }
@@ -1118,6 +1250,10 @@ impl ChainExtension<Runtime> for KoraChainExtension {
 		match func_id {
 			0 => {
 				log::info!("KoraChainExtension::call");
+				Ok(RetVal::Converging(0))
+			},
+			1 => {
+
 				Ok(RetVal::Converging(0))
 			},
 			_ => Err(DispatchError::Other("Invalid func_id")),
